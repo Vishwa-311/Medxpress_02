@@ -1,0 +1,1002 @@
+[
+  {
+    "name": "Paracetamol",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/vxRbTlpWhG-paracip_500mg_tablet_10s_44304_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Dolo 650",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/M-aa2nqQ-y-dolo_650_tablet_15s_35281_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Crocin",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/Ut6J1gPOIh-crocin_advance_tablet_20s_137469_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Ibuprofen",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/pv8mGVxTa1-combiflam_tablet_20s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Aspirin",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/H3qVxdf2AB-ecosprin_75_tablet_14s_34914_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Metformin",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/xbzfszt81D-metform_500mg_tablet_20s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Glibenclamide",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/H1NEGaORYf-glinil_m_tablet_10s_47730_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Glimepiride",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/rupuJNXXEA-gp_2mg_tablet_10s_35128_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Insulin",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/T8OxWgOSF4-bd_glide_ultra_fine_needle_insulin_syringe_u_100_31_g_x_6_mm_10s_560063_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Amlodipine",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/qpFn-uBVKU-amlip_5mg_tablet_10s_45372_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Losartan",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/wVAPEzYtXZ-losar_50mg_tablet_15s_35197_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Telmisartan",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/nW2B69u5db-telma_40mg_tablet_30s_52070_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Atenolol",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/NEOZqmHIvM-aten_50mg_tablet_14s_38762_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Propranolol",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/T3MeRVCwlY-inderal_10mg_tablet_15s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Atorvastatin",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/v6Z46EBTg4-atorva_10mg_tablet_15s_98809_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Rosuvastatin",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/f3Riu7vRus-rosuvas_10mg_tablet_15s_39744_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Pantoprazole",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/NhnYfuzgEH-pan_40mg_tablet_15s_48053_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Omeprazole",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/07DxqAD68U-omez_20mg_capsule_20s_53652_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Rabeprazole",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/FdArceHJ9--rebozen_dsr_capsule_10_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Ranitidine",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/sGcLpf7vFb-rantac_150mg_tablet_30s_31413_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Cetirizine",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/fSj-rd21Wn-cetcip_10mg_tablet_10s_37743_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Levocetirizine",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/AXFy58OwS9-levocetrizen_5mg_tablet_10s_152472_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Loratadine",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/ImC2RcWB2I-alastin_10mg_tablet_10s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Fexofenadine",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/Z_bDLtAvxB-allegra_180mg_tablet_10s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Azithromycin",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/pZBg5espGN-azithral_500mg_tablet_5s_48664_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Amoxicillin",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/Hr_rnnZ--T-mox_500mg_capsule_15s_45747_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Ciprofloxacin",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/zIiP2IsNTt-ciplox_500mg_tablet_10s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Doxycycline",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/spyUMt-nVM-doxynec_capsule_10s_857917_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Clarithromycin",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/-7alqVgItN-claribid_500mg_tablet_10_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Ofloxacin",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/kke-iKimVB-oflox_200mg_tablet_10s_44268_0_6.jpg?dpr=1"
+  },
+  {
+    "name": "Norfloxacin",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/vkEIRe4WTi-norflox_tz_rf_tablet_10s_64732_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Levofloxacin",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/N4tS4cg6YS-levoflox_500mg_tablet_10s_39843_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Metronidazole",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/eSxWuriw6P-metrogyl_400mg_tablet_15s_36773_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Tinidazole",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/_hMG830QBL-tiniba_500mg_tablet_10s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Albendazole",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/kdQelm5J1h-zentel_tablet_1s_45212_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Mebendazole",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/OdksbonSSP-mebex_tablet_6s_43538_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Domperidone",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/UCOKixmMAL-vomistop_10mg_tablet_10_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Ondansetron",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/Yqr_DcxuXO-ondem_syrup_30ml_44514_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "ORS",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/pictures/item/free/resize-w:270/mLF7P8oSeR-cipla_prolyte_nimbu_paani_ors_drink_200_ml_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Loperamide",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/3xcpnSIm18-lopamide_2mg_tablet_10s_47197_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Diclofenac",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/ZdNRO41jay-diclomol_tablet_10_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Aceclofenac",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/rLI19e5__i-aceclo_100mg_tablet_10s_47597_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Naproxen",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/shB6mgDDdV-naprosyn_500_tablet_15s_655360_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Tramadol",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/olDwcX95yE-tramasure_injection_2ml_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Codeine",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/Vd_Ti2PoXd-kodex_l_syrup_120ml_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Salbutamol",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/jS_WR5zmZa-asthalin_with_dose_counter_inhaler_200md_43199_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Budesonide",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/ShVVS-bqEG-budecort_0_5mg_respule_5x2ml_43826_0_4.jpg?dpr=1"
+  },
+  {
+    "name": "Montelukast",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/N4Se0wyK0Z-montina_l_tablet_10s_43137_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Theophylline",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/7u_jnscaVE-deriphyllin_retard_300mg_tablet_30s_48035_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Hydrocortisone",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/YPTTpKv4cT-lycor_1_cream_15gm_35503_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Betamethasone",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/3428lTWxjm-betnovate_cream_20gm_46472_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Prednisolone",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/d5gDEpJpWL-omnacortil_5mg_tablet_10s_41809_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Clobetasol",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/VgWu3JMsmy-tenovate_cream_30gm_47777_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Mupirocin",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/jPbqzf32Bx-t_bact_ointment_5gm_35656_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Neomycin",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/aKolHK7yG5-neosporin_antibiotic_powder_10gm_36799_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Clotrimazole",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/g7dp9_S38--candid_cream_30gm_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Ketoconazole",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/vEVbke3JVH-ketoscalp_anti_dandruff_hair_conditioner_shampoo_100ml_839668_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Fluconazole",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/3J9EH7hiui-fluka_150mg_tablet_1s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Terbinafine",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/Z3T3-LYSGv-terbinaforce_cream_10gm_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Acyclovir",
+    "category": "Antiviral",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/51N68rucev-acylovir_400_tablet_10s_485153_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Valacyclovir",
+    "category": "Antiviral",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/7Q_Vl-vqGc-valamac_1000mg_tablet_3s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Oseltamivir",
+    "category": "Antiviral",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/cyIfGuwgKx-fluvir_75mg_capsule_10s_265859_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Vitamin C",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/ApsQ_eHuCX-limcee_orange_flavour_500mg_chewable_tablet_15s_167684_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Vitamin D3",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/l_3xUhrXNC-uprise_d3_60k_capsule_12s_712273_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Vitamin B12",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/OCkYkCfu_U-inlife_vitamin_b12_nurospan_b_tablets_120s_741824_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Calcium Carbonate",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/E30CPbFP8K-cipcal_500mg_tablet_15s_34041_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Iron Folic Acid",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/zD6Aj4fvR8-folvite_tablet_45s_36611_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Zinc",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/oP42K1QqV--zinconia_50mg_tablet_10s_37180_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Magnesium",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/pQVqy8-XqW-ultra_magnesium_gluten_free_200mg_tablet_15s_816122_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Multivitamin",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/kXInCuUuKW-maxirich_daily_multivitamin_capsules_10s_715299_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Folic Acid",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/zD6Aj4fvR8-folvite_tablet_45s_36611_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Paracetamol 100mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/EnEcbf57LR-calpol_peppermint_flavour_paediatric_drops_15ml_37410_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Dolo 650 100mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/6t4aU8cAMp-zerodol_sp_tablet_10s_44123_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Crocin 100mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/IL1mf18xzo-crocin_peppermint_flavour_drops_15ml_41314_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Ibuprofen 100mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/rLI19e5__i-aceclo_100mg_tablet_10s_47597_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Aspirin 100mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:400/pzJqR1le34-ecosprin_150mg_tablet_14s_0_2.jpg"
+  },
+  {
+    "name": "Metformin 100mg",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/2yvfBa4-00-cetapin_xr_1000mg_tablet_15s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Glibenclamide 100mg",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/AIt3Z5Z-PT-tambac_100mg_suspension_30ml_876127_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Glimepiride 100mg",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/xVks5zTbpE-glycomet_gp_1mg_tablet_15s_55824_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Insulin 100mg",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/swkfAJ8dlJ-sitacip_e_100_25_tablet_10s_853746_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Amlodipine 100mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/CTVYGzFewD-amlokind_at_tablet_15s_176106_0_4.jpg?dpr=1"
+  },
+  {
+    "name": "Losartan 100mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/9Y_r5fJsaR-losar_h_tablet_15s_31494_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Telmisartan 100mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/VE_DRPqLEG-bisot_5_tablet_10s_726421_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Atenolol 100mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/mXbvUBV027-tenolol_100mg_tablet_14_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Propranolol 100mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/L9SRW_gkaJ-inderal_la_20mg_tablet_15s_52291_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Atorvastatin 100mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/HJnoSva3Ib-lipikind_f_tablet_10s_35859_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Rosuvastatin 100mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/f3Riu7vRus-rosuvas_10mg_tablet_15s_39744_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Pantoprazole 100mg",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/VfuEKE2H9w-pan_d_capsule_15s_52976_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Omeprazole 100mg",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:400/V0Kee0cqiG-ocid_d_capsule_10s_39888_0_1.jpg"
+  },
+  {
+    "name": "Rabeprazole 100mg",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:400/kWwr332hMe-rabium_10mg_tablet_10s_39455_0_1.jpg"
+  },
+  {
+    "name": "Ranitidine 100mg",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/e9SXKVklfa-aciloc_150mg_tablet_30s_40188_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Cetirizine 100mg",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:400/3NUhlnpNj6-criticold_advance_tablet_10s_834380_0_1.jpg"
+  },
+  {
+    "name": "Levocetirizine 100mg",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/sP0tFSn75K-levocet_5mg_tablet_10s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Loratadine 100mg",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/VrU8tha14T-alaspan_10mg_tablet_10s_399659_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Fexofenadine 100mg",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/GzJJTpnyq--allegra_120mg_tablet_10s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Azithromycin 100mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/do6BfRJWca-azee_100mg_peppermint_orange_flavour_liquid_15ml_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Amoxicillin 100mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/g8g2--tlRM-clavam_dry_syrup_30ml_0.jpg?dpr=1"
+  },
+  {
+    "name": "Ciprofloxacin 100mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/fZUqGmdODV-ciplox_tz_tablet_10s_45159_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Doxycycline 100mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/gcBBgk9M7r-edox_dt_100mg_tablet_8_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Clarithromycin 100mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/BCkOB59dA4-claribid_oral_suspension_30ml_105925_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Ofloxacin 100mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/Xz-gaic1Sl-oflox_100mg_rediuse_suspension_60ml_36860_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Norfloxacin 100mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/vkEIRe4WTi-norflox_tz_rf_tablet_10s_64732_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Levofloxacin 100mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/M7Xrb4QhmU-niftran_100mg_capsule_10s_34810_0_15.jpg?dpr=1"
+  },
+  {
+    "name": "Metronidazole 100mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/5pZ31ekSr4-o2_m_suspension_60ml_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Tinidazole 100mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/fZUqGmdODV-ciplox_tz_tablet_10s_45159_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Albendazole 100mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/kdQelm5J1h-zentel_tablet_1s_45212_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Mebendazole 100mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/pictures/item/free/resize-w:400/AYZ9oDbAsk-wormin_100mg_tablet_6s_0_0.jpg"
+  },
+  {
+    "name": "Domperidone 100mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/x6WddF_2iB-pantop_dsr_capsule_15s_673338_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Ondansetron 100mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/gerrmvWz7Y-ondem_md_4mg_tablet_10s_44702_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "ORS 100mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/mMIgloAjXg-electrorush_ors_cola_flavour_liquid_200_ml_806274_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Loperamide 100mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/PEUax2KbBm-imodium_capsule_4s_35188_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Diclofenac 100mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:400/HsITKh5L5W-dynapar_100mg_suppositories_5s_511330_0_0.jpg"
+  },
+  {
+    "name": "Aceclofenac 100mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/rLI19e5__i-aceclo_100mg_tablet_10s_47597_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Naproxen 100mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/gya4ALklYQ-naprosyn_suspension_60ml_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Tramadol 100mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/9Ac3fIfxfk-penegra_100mg_tablet_4s_35401_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Codeine 100mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/0ZKCQLL6yz-lacoptal_100mg_tablet_10s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Salbutamol 100mg",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/CQ2u-aiMsw-asthalin_respule_5x2_5ml_398852_0_4.jpg?dpr=1"
+  },
+  {
+    "name": "Budesonide 100mg",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/gis32pMiZl-budecort_100mg_inhaler_200md_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Montelukast 100mg",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/DJX-O_x1Sb-minolast_lc_10_5mg_tablet_10s_544878_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Theophylline 100mg",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/PzKCJ4FIND-deriphyllin_tablet_30s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Hydrocortisone 100mg",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/Kf3NexD4LX-primacort_100mg_injection_1s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Betamethasone 100mg",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/z6xYDJSYT9-serta_100mg_tablet_15s_53324_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Prednisolone 100mg",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/3hMo-GZ16_-solu_medrol_1gm_injection_8ml_47781_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Clobetasol 100mg",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/GqMwmWXHgZ-cefolac_100mg_oral_suspension_30ml_0.jpg?dpr=1"
+  },
+  {
+    "name": "Mupirocin 100mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/4VvV8-gPaz-supirocin_cream_10gm_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Neomycin 100mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/L7gGCI8ZNQ-panderm_cream_15gm_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Clotrimazole 100mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/ABxxscDnta-clingen_vag_100mg_suppository_7_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Ketoconazole 100mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/w0LAmqkeyy-ketonext_2_cream_100gm_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Fluconazole 100mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/BqKJkV7wCp-zocon_dt_100mg_tablet_4s_45115_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Terbinafine 100mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/x7nhU6ucRy-terbinaforce_250mg_tablet_7s_31438_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Acyclovir 100mg",
+    "category": "Antiviral",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/RpSxKcHvwa-valcivir_1gm_tablet_3s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Valacyclovir 100mg",
+    "category": "Antiviral",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/lKUz-2TC2a-valanix_1000mg_tablet_3s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Oseltamivir 100mg",
+    "category": "Antiviral",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/fegfTyJ4oz-antiflu_75mg_capsule_10s_43464_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Vitamin C 100mg",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/FHyo3axyuN-becozym_c_forte_tablet_20s_725385_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Vitamin D3 100mg",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/aFVMA3nove-thiaplex_100_tablet_10s_861905_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Vitamin B12 100mg",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/VjgS9MgjaL-stamina_b12_injection_2ml_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Calcium Carbonate 100mg",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/wXkux1GyLI-gemcal_capsule_15s_40821_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Iron Folic Acid 100mg",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/NQJWoLOmP2-fericip_xt_tablet_10s_53424_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Zinc 100mg",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/cgyqnf7lv5-zincofer_xt_tablet_10s_37179_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Magnesium 100mg",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/9KPcW39i6u-mgd3_250mg_tablet_10s_48039_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Multivitamin 100mg",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/pictures/item/free/resize-w:270/0juoVcJ1jL-supradyn_daily_tablet_15s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Folic Acid 100mg",
+    "category": "Vitamins",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/2CMyj8t5Ok-richar_cr_100mg_tablet_10s_48512_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Paracetamol 200mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/pv8mGVxTa1-combiflam_tablet_20s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Dolo 650 200mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/euRV6W08u3-dolonex_dt_20mg_tablet_15s_53291_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Crocin 200mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/AKdscSNiQJ-cartiquin_200mg_tablet_15s_156665_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Ibuprofen 200mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/qdqfpLRGJS-brufen_200mg_tablet_15s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Aspirin 200mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/TSbIPVuhdS-rozagold_20mg_capsule_10s_52449_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Metformin 200mg",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/YX3Q9kdR28-metmin_a_tablet_10s_40178_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Glibenclamide 200mg",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/wYkZlKZP38-diabetrol_tablet_10s_407991_0_5.jpg?dpr=1"
+  },
+  {
+    "name": "Glimepiride 200mg",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/qMBaMmtYjH-gluconorm_g2_forte_tablet_15s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Insulin 200mg",
+    "category": "Diabetes",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/IKV27uvapR-allstar_reusable_insulin_pendevice_1s_43136_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Amlodipine 200mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/CTVYGzFewD-amlokind_at_tablet_15s_176106_0_4.jpg?dpr=1"
+  },
+  {
+    "name": "Losartan 200mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/_Q9RcezUxq-revas_am_5mg_tablet_10_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Telmisartan 200mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/oqJlSlczZj-cidmus_200mg_tablet_7_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Atenolol 200mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/pictures/item/free/resize-w:270/ReZNUEDNso-azmarda_200mg_tablet_7s_55020_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Propranolol 200mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/eNIcG-iZ0J-inderal_20mg_tablet_15s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Atorvastatin 200mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/HLpBalbm-0-lipvas_20mg_tablet_10_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Rosuvastatin 200mg",
+    "category": "BP/Heart",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/3nerbLoB4y-rosuvotin_asp_20_capsule_10s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Pantoprazole 200mg",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/Ev9Oejh3PS-pan_20mg_tablet_15s_48043_0_4.jpg?dpr=1"
+  },
+  {
+    "name": "Omeprazole 200mg",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/07DxqAD68U-omez_20mg_capsule_20s_53652_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Rabeprazole 200mg",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/NaLZvNJ7nK-dolostat_r_capsule_10s_706943_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Ranitidine 200mg",
+    "category": "Acidity",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/OTodq1YR65-azitus_xl_200mg_syrup_30ml_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Cetirizine 200mg",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/gQgV1MkZnL-ce_200mg_capsule_10s_850278_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Levocetirizine 200mg",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/DZ9lqs1yUs-montgold_tablet_10_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Loratadine 200mg",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/OTodq1YR65-azitus_xl_200mg_syrup_30ml_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Fexofenadine 200mg",
+    "category": "Allergy",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/GzJJTpnyq--allegra_120mg_tablet_10s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Azithromycin 200mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/lG5c2telCS-azee_200mg_peppermint_orange_flavour_liquid_15ml_352847_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Amoxicillin 200mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/FajFUCxyQm-augmentin_duo_oral_suspension_30ml_298632_0_4.jpg?dpr=1"
+  },
+  {
+    "name": "Ciprofloxacin 200mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/fZUqGmdODV-ciplox_tz_tablet_10s_45159_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Doxycycline 200mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/MYm6mYKV8VF-podocip_200mg_tablet_10s_859564_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Clarithromycin 200mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/O29I3wsNng-zithrocin_200mg_liquid_15ml_374681_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Ofloxacin 200mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/kke-iKimVB-oflox_200mg_tablet_10s_44268_0_6.jpg?dpr=1"
+  },
+  {
+    "name": "Norfloxacin 200mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/LcIP072yJC-norflox_200mg_tablet_10_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Levofloxacin 200mg",
+    "category": "Antibiotic",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/vKoVGMfsJd-taxim_o_200mg_tablet_10s_31364_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Metronidazole 200mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/LGfkR54tWU-metrogyl_200mg_tablet_15s_41003_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Tinidazole 200mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/fZUqGmdODV-ciplox_tz_tablet_10s_45159_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Albendazole 200mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/kdQelm5J1h-zentel_tablet_1s_45212_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Mebendazole 200mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/LGfkR54tWU-metrogyl_200mg_tablet_15s_41003_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Domperidone 200mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/5HdX-dEXqx-naxdom_250_tablet_15s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Ondansetron 200mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/VEqp1k3ebd-sizlac_200mg_tablet_10s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "ORS 200mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/MD2WnwrccA-electrorush_ors_orange_flavour_liquid_200_ml_806273_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Loperamide 200mg",
+    "category": "Stomach",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/H0YE6fUrYM-lacosam_200mg_tablet_15s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Diclofenac 200mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/z-HgPWgA9E-reactin_sr_100mg_tablet_10s_46920_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Aceclofenac 200mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/pPjUnPfM6w-algesia_cr_capsule_10s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Naproxen 200mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/UbI_2WMbkR-trueceprol_od_600mg_tablet_10_s_0.jpg?dpr=1"
+  },
+  {
+    "name": "Tramadol 200mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/JwXN9BEeGz-zeptol_cr_200mg_tablet_10s_34154_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Codeine 200mg",
+    "category": "Fever/Pain",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/VEqp1k3ebd-sizlac_200mg_tablet_10s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Salbutamol 200mg",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/jS_WR5zmZa-asthalin_with_dose_counter_inhaler_200md_43199_0_2.jpg?dpr=1"
+  },
+  {
+    "name": "Budesonide 200mg",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/ReTN6yOdNE-budecort_200_rotacap_30s_35886_0_3.jpg?dpr=1"
+  },
+  {
+    "name": "Montelukast 200mg",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/-NFbslvbdl-montek_ab_tablet_10s_35691_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Theophylline 200mg",
+    "category": "Respiratory",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/WGNTTbC2rW-theo_asthalin_forte_tablet_20s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Hydrocortisone 200mg",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/YPTTpKv4cT-lycor_1_cream_15gm_35503_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Betamethasone 200mg",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/MUTjyoQnYm-labebet_200mg_tablet_10s_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Prednisolone 200mg",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/hSSr4ti2rm-omnacortil_20mg_tablet_10s_41811_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Clobetasol 200mg",
+    "category": "Steroid",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/fXrHnwTKyJ-colospa_retard_200mg_capsule_15s_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Mupirocin 200mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/O29I3wsNng-zithrocin_200mg_liquid_15ml_374681_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Neomycin 200mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/L7gGCI8ZNQ-panderm_cream_15gm_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Clotrimazole 200mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/JEMLRemlRT-candid_cl_suppository_3s_44622_0_1.jpg?dpr=1"
+  },
+  {
+    "name": "Ketoconazole 200mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/AlzltA2c02-ketocip_tablet_10s_567327_0_0.jpg?dpr=1"
+  },
+  {
+    "name": "Fluconazole 200mg",
+    "category": "Skin",
+    "imageURL": "https://cdn.netmeds.tech/v2/plain-cake-860195/netmed/wrkr/products/assets/item/free/resize-w:270/tUH0Jc0zjr-fungicip_200mg_tablet_1s_578187_0_2.jpg?dpr=1"
+  }
+]

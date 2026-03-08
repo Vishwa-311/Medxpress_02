@@ -1,0 +1,38 @@
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\components\layout\Navbar.jsx
+ - 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 6)
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\context\AuthContext.jsx
+ - Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components. (Line 13)
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\context\CartContext.jsx
+ - Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components. (Line 5)
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\pages\Cart.jsx
+ - 'db' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 5)
+ - 'collection' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 6)
+ - 'addDoc' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 6)
+ - 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 8)
+ - 'clearCart' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 11)
+ - 'currentUser' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 12)
+ - 'setIsPlacingOrder' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 14)
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\pages\Checkout.jsx
+ - 'serverTimestamp' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 6)
+ - 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 8)
+ - 'pharmacyData' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 27)
+ - 'loadingPharmacy' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 28)
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\pages\Home.jsx
+ - 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 4)
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\pages\Login.jsx
+ - 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 5)
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\pages\OrderTracking.jsx
+ - 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 6)
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\pages\Signup.jsx
+ - 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 5)
+ - 'err' is defined but never used. (Line 37)
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\pages\dashboards\CustomerDashboard.jsx
+ - 'addDoc' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 5)
+ - 'orderBy' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 5)
+ - 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 7)
+ - 'userRole' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 12)
+ - 'manualAddress' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 29)
+ - 'setManualAddress' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 29)
+FILE: C:\Users\Vishwaved\OneDrive\Desktop\MedXpress Versions\MedXpress_1\src\pages\dashboards\PharmacyDashboard.jsx
+ - 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. (Line 6)
+ - React Hook useEffect has missing dependencies: 'fetchMedicines' and 'fetchOrders'. Either include them or remove the dependency array. (Line 36)
