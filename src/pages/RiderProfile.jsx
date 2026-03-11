@@ -29,8 +29,10 @@ const RiderProfile = () => {
 
             snapshot.docs.forEach(doc => {
                 const data = doc.data();
-                const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : 
-                                  (data.createdAt?.seconds ? new Date(data.createdAt.seconds * 1000) : new Date(0));
+                // Find any valid timestamp for the order to determine if it was done today
+                const orderTs = data.acceptedAt || data.createdAt;
+                const createdAt = orderTs?.toDate ? orderTs.toDate() : 
+                                  (orderTs?.seconds ? new Date(orderTs.seconds * 1000) : new Date(0));
 
                 if (createdAt >= startOfDay) {
                     todayTrips++;
