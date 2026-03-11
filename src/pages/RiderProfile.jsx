@@ -9,18 +9,39 @@ const RiderProfile = () => {
     const { userData, currentUser } = useAuth();
     const [stats, setStats] = useState({ totalTrips: 0, totalEarnings: 0 });
 
-    // All-time stats from completed orders
+    // Mirror RiderDashboard combined logic for Stats
     useEffect(() => {
         if (!currentUser) return;
+
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
         const q = query(
             collection(db, 'orders'),
             where('riderId', '==', currentUser.uid),
             where('orderStatus', '==', 'completed')
         );
-        const unsubscribe = onSnapshot(q, (snap) => {
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            let todayEarnings = 0;
+            let todayTrips = 0;
+            let allTimeTrips = snapshot.docs.length; // Count all completed orders
+
+            snapshot.docs.forEach(doc => {
+                const data = doc.data();
+                const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : 
+                                  (data.createdAt?.seconds ? new Date(data.createdAt.seconds * 1000) : new Date(0));
+
+                if (createdAt >= startOfDay) {
+                    todayTrips++;
+                    todayEarnings += 30; // ₹30 per delivery
+                }
+            });
+
             setStats({
-                totalTrips: snap.size,
-                totalEarnings: snap.size * 30  // ₹30 per delivery
+                totalTrips: allTimeTrips,
+                todayTrips: todayTrips,
+                todayEarnings: todayEarnings
             });
         });
         return () => unsubscribe();
@@ -60,12 +81,12 @@ const RiderProfile = () => {
 
                             <div className="mt-6 grid grid-cols-2 gap-3">
                                 <div className="bg-green-50 rounded-2xl p-4 text-center border border-green-100">
-                                    <p className="text-2xl font-black text-[#2e7d32]">{stats.totalTrips}</p>
-                                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1">Total Trips</p>
+                                    <p className="text-2xl font-black text-[#2e7d32]">{stats.todayTrips}</p>
+                                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1">Today's Trips</p>
                                 </div>
                                 <div className="bg-green-50 rounded-2xl p-4 text-center border border-green-100">
-                                    <p className="text-2xl font-black text-[#2e7d32]">₹{stats.totalEarnings}</p>
-                                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1">Earned</p>
+                                    <p className="text-2xl font-black text-[#2e7d32]">₹{stats.todayEarnings}</p>
+                                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1">Today's Earnings</p>
                                 </div>
                             </div>
                         </div>

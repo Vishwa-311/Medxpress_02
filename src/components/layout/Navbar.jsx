@@ -5,6 +5,8 @@ import { useCart } from '../../context/CartContext';
 import { ShoppingBag, User, LogOut, Menu, X, ShoppingCart, ClipboardList, Home } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
+import logo from '../../assets/logo/medlogo.png';
+
 const Navbar = () => {
     const { currentUser, logout, userRole } = useAuth();
     const { cartCount } = useCart();
@@ -55,9 +57,8 @@ const Navbar = () => {
         <nav className="sticky top-0 z-[1000] h-20 bg-white shadow-sm flex items-center">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-between items-center">
                 {/* Brand */}
-                <Link to="/" className="flex items-center gap-2.5 text-2xl font-extrabold text-[#2e7d32]" onClick={() => setIsOpen(false)}>
-                    <ShoppingBag size={28} />
-                    <span>MedXpress</span>
+                <Link to="/" className="flex items-center" onClick={() => setIsOpen(false)}>
+                    <img src={logo} alt="MedXpress" className="h-20 w-auto object-contain" />
                 </Link>
 
                 {/* Desktop Nav */}

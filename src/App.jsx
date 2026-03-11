@@ -49,12 +49,16 @@ const ProtectedRoute = ({ children }) => {
 const DashboardRedirector = () => {
   const { currentUser, userRole, loading } = useAuth();
 
-  if (loading || (currentUser && !userRole)) return (
+  // If Firebase is still verifying the session, wait.
+  if (loading) return (
     <div className="flex flex-col items-center justify-center h-screen bg-white">
       <Loader2 className="animate-spin text-[#2e7d32] mb-4" size={48} />
       <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Redirecting...</p>
     </div>
   );
+
+  // Once loading is done, if no user is found, send to login
+  if (!currentUser) return <Navigate to="/login" replace />;
 
   if (userRole === 'pharmacy') return <Navigate to="/pharmacy-dashboard" replace />;
   if (userRole === 'rider') return <Navigate to="/rider-dashboard" replace />;
@@ -64,12 +68,14 @@ const DashboardRedirector = () => {
 // Role-Based Protected Routes
 const CustomerRoute = ({ children }) => {
   const { currentUser, userRole, loading } = useAuth();
-  if (loading || (currentUser && !userRole)) return (
+  
+  if (loading) return (
     <div className="flex flex-col items-center justify-center h-screen bg-white">
       <Loader2 className="animate-spin text-[#2e7d32] mb-4" size={48} />
       <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Loading...</p>
     </div>
   );
+
   if (!currentUser) return <Navigate to="/login" replace />;
   if (userRole === 'pharmacy') return <Navigate to="/pharmacy-dashboard" replace />;
   if (userRole === 'rider') return <Navigate to="/rider-dashboard" replace />;
@@ -78,12 +84,14 @@ const CustomerRoute = ({ children }) => {
 
 const PharmacyRoute = ({ children }) => {
   const { currentUser, userRole, loading } = useAuth();
-  if (loading || (currentUser && !userRole)) return (
+  
+  if (loading) return (
     <div className="flex flex-col items-center justify-center h-screen bg-white">
       <Loader2 className="animate-spin text-[#2e7d32] mb-4" size={48} />
       <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Loading...</p>
     </div>
   );
+
   if (!currentUser) return <Navigate to="/login" replace />;
   if (userRole === 'rider') return <Navigate to="/rider-dashboard" replace />;
   if (userRole !== 'pharmacy') return <Navigate to="/customer-dashboard" replace />;
@@ -92,12 +100,14 @@ const PharmacyRoute = ({ children }) => {
 
 const RiderRoute = ({ children }) => {
   const { currentUser, userRole, loading } = useAuth();
-  if (loading || (currentUser && !userRole)) return (
+  
+  if (loading) return (
     <div className="flex flex-col items-center justify-center h-screen bg-white">
       <Loader2 className="animate-spin text-[#2e7d32] mb-4" size={48} />
       <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Loading...</p>
     </div>
   );
+
   if (!currentUser) return <Navigate to="/login" replace />;
   if (userRole !== 'rider') return <Navigate to="/customer-dashboard" replace />;
   return children;
