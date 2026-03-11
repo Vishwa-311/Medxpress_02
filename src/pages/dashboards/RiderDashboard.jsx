@@ -50,6 +50,15 @@ const RiderDashboard = () => {
         }
     };
 
+    // Helper to get sortable time from Firestore timestamp
+    const getSortMillis = (ts) => {
+        if (!ts) return Date.now() + 8640000000; // Put brand new pending orders at very top
+        if (typeof ts.toMillis === 'function') return ts.toMillis();
+        if (ts.seconds) return ts.seconds * 1000;
+        if (ts instanceof Date) return ts.getTime();
+        return 0;
+    };
+
     // 1. Listen for Available Orders
     useEffect(() => {
         if (!isAvailable) {
@@ -96,16 +105,13 @@ const RiderDashboard = () => {
                     ...data,
                     pharmacyName,
                     pharmacyAddress,
-                    distance: distance ? Number(distance.toFixed(1)) : null
+                    distance: distance ? Number(distance.toFixed(1)) : null,
+                    _sortMillis: getSortMillis(data.createdAt || data.acceptedAt)
                 });
             }
 
-            // Sort by proximity
-            ordersData.sort((a, b) => {
-                if (a.distance === null) return 1;
-                if (b.distance === null) return -1;
-                return a.distance - b.distance;
-            });
+            // EXPLICIT: Sort by Recently Placed (Top priority as requested by user)
+            ordersData.sort((a, b) => b._sortMillis - a._sortMillis);
 
             setAvailableOrders(ordersData);
         });
@@ -135,19 +141,27 @@ const RiderDashboard = () => {
                     if (pharmaSnap.exists()) pharmacyName = pharmaSnap.data().name;
                 } catch (err) { }
 
-                activeData.push({ id: orderDoc.id, ...data, pharmacyName });
+                activeData.push({ 
+                    id: orderDoc.id, 
+                    ...data, 
+                    pharmacyName,
+                    _sortMillis: getSortMillis(data.createdAt || data.acceptedAt) 
+                });
             }
+
+            // EXPLICIT: Sort by Recently Placed (Top priority as requested by user)
+            activeData.sort((a, b) => b._sortMillis - a._sortMillis);
+
             setActiveOrders(activeData);
             setLoading(false);
         });
         return () => unsubscribe();
     }, [currentUser]);
 
-    // 3. Listen for Today's Stats
+    // 3. Listen for Stats (Today's Earnings & Total Experience)
     useEffect(() => {
         if (!currentUser) return;
 
-        // Target today's start
         const startOfDay = new Date();
         startOfDay.setHours(0, 0, 0, 0);
 
@@ -158,22 +172,32 @@ const RiderDashboard = () => {
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            let totalEarnings = 0;
-            let tripCount = 0;
+            let todayEarnings = 0;
+            let todayTrips = 0;
+            let allTimeTrips = snapshot.docs.length; // Count all completed orders
 
             snapshot.docs.forEach(doc => {
                 const data = doc.data();
-                const createdAt = data.createdAt?.toDate();
+                const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : 
+                                  (data.createdAt?.seconds ? new Date(data.createdAt.seconds * 1000) : new Date(0));
 
-                if (createdAt && createdAt >= startOfDay) {
-                    tripCount++;
-                    // Assume rider gets a fixed commission or delivery fee? 
-                    // For now, let's track Total Volume or base it on a flat fee (e.g. ₹30 per trip)
-                    totalEarnings += 30; // Example: ₹30 per delivery
+                if (createdAt >= startOfDay) {
+                    todayTrips++;
+                    todayEarnings += 30; // ₹30 per delivery
                 }
             });
 
-            setStats({ earnings: totalEarnings, trips: tripCount });
+            // Calculate experience dynamically
+            let experienceLevel = "New";
+            if (allTimeTrips > 100) experienceLevel = "Expert";
+            else if (allTimeTrips > 20) experienceLevel = "Pro";
+            else if (allTimeTrips > 5) experienceLevel = "Experienced";
+
+            setStats({ 
+                earnings: todayEarnings, 
+                trips: todayTrips,
+                experience: experienceLevel 
+            });
         });
         return () => unsubscribe();
     }, [currentUser]);
@@ -265,7 +289,7 @@ const RiderDashboard = () => {
                         { label: 'Today\'s Earnings', value: `₹${stats.earnings}.00`, icon: TrendingUp, color: 'bg-blue-50 text-blue-600' },
                         { label: 'Completed', value: stats.trips.toString(), icon: CheckCircle2, color: 'bg-green-50 text-green-600' },
                         { label: 'Available Now', value: availableOrders.length.toString(), icon: Package, color: 'bg-orange-50 text-orange-600' },
-                        { label: 'Experience', value: 'New', icon: Shield, color: 'bg-purple-50 text-purple-600' },
+                        { label: 'Experience', value: stats.experience || 'New', icon: Shield, color: 'bg-purple-50 text-purple-600' },
                     ].map((stat, i) => (
                         <motion.div
                             key={i}

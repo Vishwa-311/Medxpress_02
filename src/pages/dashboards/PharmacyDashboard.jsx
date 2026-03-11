@@ -107,10 +107,20 @@ const PharmacyDashboard = () => {
 
                 // 2. Stable Newest-First Sort (Desc)
                 fetched.sort((a, b) => {
-                    // Priority 1: Status (Pending should be at the top)
-                    const statusWeight = { 'pending': 3, 'confirmed': 2, 'outForDelivery': 1 };
-                    const weightA = statusWeight[a.orderStatus] || 0;
-                    const weightB = statusWeight[b.orderStatus] || 0;
+                    // Priority 1: Smart Status Weight (Highest number = Top of list)
+                    const getWeight = (order) => {
+                        if (order.orderStatus === 'pending') return 60; // Immediate Action Needed
+                        if (order.orderStatus === 'confirmed') {
+                            if (order.deliveryStatus === 'unassigned') return 50; // Waiting for Rider
+                            if (order.deliveryStatus === 'assigned') return 40; // Rider on way to Pharmacy
+                            if (order.deliveryStatus === 'pickedUp') return 30; // Rider has package
+                            if (order.deliveryStatus === 'outForDelivery') return 20; // Rider nearing Customer
+                        }
+                        return 10; // Completed/Delivered/Default
+                    };
+
+                    const weightA = getWeight(a);
+                    const weightB = getWeight(b);
 
                     if (weightB !== weightA) return weightB - weightA;
 

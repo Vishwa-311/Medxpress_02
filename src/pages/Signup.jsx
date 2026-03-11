@@ -18,6 +18,15 @@ const Signup = () => {
     const [vehicleType, setVehicleType] = useState('Bike');
     const [licenseNumber, setLicenseNumber] = useState('');
 
+    // Pharmacy Specific States
+    const [latitude, setLatitude] = useState('');
+    const [longitude, setLongitude] = useState('');
+    const [ownerName, setOwnerName] = useState('');
+    const [acceptCOD, setAcceptCOD] = useState(true);
+    const [acceptUPI, setAcceptUPI] = useState(false);
+    const [qrImage, setQrImage] = useState(null);
+    const [qrImagePreview, setQrImagePreview] = useState('');
+
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const { signup } = useAuth();
@@ -110,7 +119,13 @@ const Signup = () => {
             // Save to Firebase via AuthContext
             await signup(email, password, name, phone, role, locationData, address, extraData);
 
-            navigate('/');
+            if (role === 'pharmacy') {
+                navigate('/pharmacy-dashboard');
+            } else if (role === 'rider') {
+                navigate('/rider-dashboard');
+            } else {
+                navigate('/');
+            }
         } catch (err) {
             setError('Signup failed: ' + err.message);
             console.error(err);

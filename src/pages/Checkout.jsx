@@ -97,39 +97,11 @@ const Checkout = () => {
             return;
         }
 
-        if (paymentMethod === 'UPI' && !paymentScreenshot) {
-            alert("Please upload the payment screenshot for UPI verification.");
-            return;
-        }
-
         setIsPlacingOrder(true);
 
         try {
             const firstPharmacyId = cart[0]?.pharmacyId;
             if (!firstPharmacyId) throw new Error("Invalid cart data: missing pharmacy info.");
-
-            let screenshotURL = '';
-            // Upload Screenshot if UPI
-            if (paymentMethod === 'UPI' && paymentScreenshot) {
-                const reader = new FileReader();
-                screenshotURL = await new Promise((resolve, reject) => {
-                    reader.readAsDataURL(paymentScreenshot);
-                    reader.onloadend = async () => {
-                        try {
-                            const base64Image = reader.result.split(',')[1];
-                            const formData = new FormData();
-                            formData.append('image', base64Image);
-                            const response = await fetch(`https://api.imgbb.com/1/upload?key=6c27feddb60aeeafcd67027ee83cd504`, {
-                                method: 'POST',
-                                body: formData
-                            });
-                            const data = await response.json();
-                            if (data.success) resolve(data.data.display_url);
-                            else reject(new Error("Screenshot Upload Failed"));
-                        } catch (err) { reject(err); }
-                    };
-                });
-            }
 
             const orderData = {
                 customerId: currentUser.uid,
@@ -149,7 +121,6 @@ const Checkout = () => {
                 items: cart,
                 totalAmount: cartTotal + 2,
                 paymentMethod: paymentMethod,
-                paymentScreenshotURL: screenshotURL || null,
                 paymentStatus: "pending",
                 orderStatus: "pending",
                 riderId: null, // Critical for Firestore queries
@@ -356,7 +327,7 @@ const Checkout = () => {
                                                     </li>
                                                     <li className="flex items-start gap-4">
                                                         <span className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs shrink-0">3</span>
-                                                        <span>Take a screenshot of the successful transaction and upload it below.</span>
+                                                        <span>Place your order! A screenshot is no longer required. Let the Pharmacist verify the transaction when they process your order.</span>
                                                     </li>
                                                 </ul>
 
@@ -373,7 +344,7 @@ const Checkout = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-col items-center gap-8">
+                                            <div className="flex flex-col items-center justify-center">
                                                 <div className="p-4 bg-white rounded-[2rem] border border-gray-100 shadow-2xl relative group">
                                                     <div className="absolute inset-0 bg-green-500/5 blur-2xl rounded-full -z-0 opacity-0 group-hover:opacity-100 transition-opacity" />
                                                     <div className="relative z-10 p-2 bg-white rounded-2xl border border-gray-50">
@@ -385,36 +356,6 @@ const Checkout = () => {
                                                     </div>
                                                     <div className="mt-4 text-center">
                                                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{pharmacyData.ownerName || 'Verified'}'s UPI QR</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="w-full">
-                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 ml-1">Upload Payment Proof</p>
-                                                    <div
-                                                        onClick={() => document.getElementById('screenshot-upload').click()}
-                                                        className="border-2 border-dashed border-gray-200 rounded-3xl p-6 text-center hover:border-[#2e7d32] transition-all cursor-pointer bg-gray-50 group min-h-[140px] flex flex-col items-center justify-center"
-                                                    >
-                                                        <input id="screenshot-upload" type="file" hidden accept="image/*" onChange={handleScreenshotChange} />
-                                                        {paymentScreenshotPreview ? (
-                                                            <div className="flex items-center gap-4 w-full">
-                                                                <img src={paymentScreenshotPreview} alt="Screenshot" className="w-16 h-16 rounded-xl object-cover border-2 border-white shadow-md" />
-                                                                <div className="text-left flex-grow">
-                                                                    <p className="text-sm font-black text-gray-800 line-clamp-1">{paymentScreenshot.name}</p>
-                                                                    <p className="text-[10px] text-[#2e7d32] font-black uppercase tracking-widest mt-0.5">Screenshot Ready!</p>
-                                                                </div>
-                                                                <div className="p-2 bg-white rounded-full text-[#2e7d32] shadow-sm">
-                                                                    <CheckCircle2 size={24} />
-                                                                </div>
-                                                            </div>
-                                                        ) : (
-                                                            <>
-                                                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-gray-400 group-hover:text-[#2e7d32] shadow-sm transition-colors mb-3">
-                                                                    <Upload size={24} />
-                                                                </div>
-                                                                <p className="text-sm font-black text-gray-800">Choose Screenshot</p>
-                                                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Proof of Successful UPI Payment</p>
-                                                            </>
-                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

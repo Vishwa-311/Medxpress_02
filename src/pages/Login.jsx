@@ -38,8 +38,10 @@ const Login = () => {
                         return;
                     }
                     navigate('/rider-dashboard');
+                } else if (userData.role === 'pharmacy') {
+                    navigate('/pharmacy-dashboard');
                 } else {
-                    navigate('/');
+                    navigate('/'); // Customer goes to Home
                 }
             } else {
                 navigate('/');
