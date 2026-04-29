@@ -92,22 +92,6 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Categories */}
-            <section className="py-20 overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-3xl font-extrabold mb-10 text-gray-800">Shop by Category</h2>
-                    <div className="flex gap-6 md:gap-10 overflow-x-auto pb-8 scrollbar-hide no-scrollbar">
-                        {['Prescription', 'Wellness', 'Baby Care', 'Personal Care', 'Ayurveda', 'Homeopathy'].map((cat, i) => (
-                            <div key={i} className="flex flex-col items-center gap-4 min-w-[120px] transition-transform hover:scale-105 cursor-pointer">
-                                <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full flex items-center justify-center text-4xl shadow-md border border-gray-100">
-                                    {['📄', '🧘', '👶', '🧴', '🌿', '🧪'][i]}
-                                </div>
-                                <span className="font-bold text-gray-700 text-sm md:text-base whitespace-nowrap">{cat}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
         </div>
     );
 };

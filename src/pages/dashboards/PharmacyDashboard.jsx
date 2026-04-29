@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase';
-import { collection, addDoc, query, getDocs, doc, getDoc, serverTimestamp, orderBy, updateDoc, where, onSnapshot } from 'firebase/firestore';
-import { Plus, Upload, Loader2, Package, IndianRupee, Image as ImageIcon, AlertCircle, CheckCircle2, Pill, ClipboardList, MapPin, Phone, Check, Truck, Info } from 'lucide-react';
+import { collection, addDoc, query, getDocs, doc, getDoc, serverTimestamp, updateDoc, where, onSnapshot } from 'firebase/firestore';
+import { Plus, Upload, Loader2, Package, IndianRupee, Image as ImageIcon, AlertCircle, CheckCircle2, Pill, ClipboardList, MapPin, Phone, Check, Truck, Info, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const PharmacyDashboard = () => {
@@ -26,6 +26,9 @@ const PharmacyDashboard = () => {
     const [selectedMeds, setSelectedMeds] = useState([]);
     const [inventoryDetails, setInventoryDetails] = useState({});
     const [saving, setSaving] = useState(false);
+    const [orderToReject, setOrderToReject] = useState(null);
+    const [analytics, setAnalytics] = useState({ todayOrders: 0, todayEarnings: 0, todayCompleted: 0 });
+    const [pricingInputs, setPricingInputs] = useState({}); // { orderId: { itemId: price } }
 
     // Helper to safely format Firestore timestamps or Dates
     const formatOrderDate = (timestamp) => {
@@ -75,11 +78,32 @@ const PharmacyDashboard = () => {
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             try {
+                const startOfDay = new Date();
+                startOfDay.setHours(0, 0, 0, 0);
+
+                let tOrders = 0;
+                let tEarnings = 0;
+                let tCompleted = 0;
+
                 // 1. Normalize and Calculate Stable Sorting Value
                 const fetched = snapshot.docs.map(doc => {
                     const data = doc.data();
                     const ts = data.createdAt;
                     let millis = 0;
+
+                    // Analytics calculation
+                    const orderDate = ts?.toDate ? ts.toDate() : (ts?.seconds ? new Date(ts.seconds * 1000) : null);
+                    
+                    // If no date yet (pending server timestamp), assume it's today
+                    const isToday = !orderDate || orderDate >= startOfDay;
+
+                    if (isToday) {
+                        tOrders++;
+                        if (data.orderStatus === 'completed') {
+                            tCompleted++;
+                            tEarnings += Number(data.totalAmount || 0);
+                        }
+                    }
 
                     // Extremely robust check for pending/missing timestamps
                     const isPending = !ts ||
@@ -95,7 +119,6 @@ const PharmacyDashboard = () => {
                     } else if (ts instanceof Date) {
                         millis = ts.getTime();
                     } else if (typeof ts === 'number') {
-                        // Check if it's seconds vs millis
                         millis = ts < 10000000000 ? ts * 1000 : ts;
                     } else {
                         const d = new Date(ts);
@@ -103,20 +126,40 @@ const PharmacyDashboard = () => {
                     }
 
                     return { ...data, id: doc.id, _sortMillis: Number(millis) || 0 };
-                }).filter(order => ['pending', 'confirmed', 'outForDelivery', 'completed'].includes(order.orderStatus));
+                });
 
-                // 2. Stable Newest-First Sort (Desc)
+                setAnalytics({
+                    todayOrders: tOrders,
+                    todayEarnings: tEarnings,
+                    todayCompleted: tCompleted
+                });
+
+                // 2. Stable Newest-First Sort (Desc) with Priority grouping
                 fetched.sort((a, b) => {
-                    // Priority 1: Smart Status Weight (Highest number = Top of list)
+                    // Group 1: Ongoing (Pending, Confirmed, etc.)
+                    // Group 2: Finalized (Completed, Rejected, Cancelled)
+                    const isOngoing = (status) => ['pending', 'confirmed', 'outForDelivery', 'pickedUp'].includes(status);
+                    
+                    const ongoingA = isOngoing(a.orderStatus);
+                    const ongoingB = isOngoing(b.orderStatus);
+
+                    if (ongoingA && !ongoingB) return -1;
+                    if (!ongoingA && ongoingB) return 1;
+
+                    // Priority 0: Emergency Orders always at top within their group
+                    if (a.isEmergency && !b.isEmergency) return -1;
+                    if (!a.isEmergency && b.isEmergency) return 1;
+
+                    // Priority 1: Smart Status Weight
                     const getWeight = (order) => {
-                        if (order.orderStatus === 'pending') return 60; // Immediate Action Needed
+                        if (order.orderStatus === 'pending') return 60;
                         if (order.orderStatus === 'confirmed') {
-                            if (order.deliveryStatus === 'unassigned') return 50; // Waiting for Rider
-                            if (order.deliveryStatus === 'assigned') return 40; // Rider on way to Pharmacy
-                            if (order.deliveryStatus === 'pickedUp') return 30; // Rider has package
-                            if (order.deliveryStatus === 'outForDelivery') return 20; // Rider nearing Customer
+                            if (order.deliveryStatus === 'unassigned') return 50;
+                            if (order.deliveryStatus === 'assigned') return 40;
+                            if (order.deliveryStatus === 'pickedUp') return 30;
+                            if (order.deliveryStatus === 'outForDelivery') return 20;
                         }
-                        return 10; // Completed/Delivered/Default
+                        return 10;
                     };
 
                     const weightA = getWeight(a);
@@ -128,7 +171,7 @@ const PharmacyDashboard = () => {
                     const diff = b._sortMillis - a._sortMillis;
                     if (diff !== 0) return diff;
 
-                    return b.id.localeCompare(a.id); // Tie-breaker
+                    return b.id.localeCompare(a.id);
                 });
 
                 setOrders(fetched);
@@ -144,6 +187,53 @@ const PharmacyDashboard = () => {
 
         return () => unsubscribe();
     }, [currentUser?.uid, fetchMedicines]);
+
+    const handlePricingChange = (orderId, itemId, price) => {
+        setPricingInputs(prev => ({
+            ...prev,
+            [orderId]: {
+                ...(prev[orderId] || {}),
+                [itemId]: price
+            }
+        }));
+    };
+
+    const handleSavePricing = async (orderId) => {
+        const order = orders.find(o => o.id === orderId);
+        const prices = pricingInputs[orderId] || {};
+        
+        // Validate all items have prices
+        const allPriced = order.items.every(item => prices[item.requestId] > 0);
+        if (!allPriced) {
+            setMessage({ type: 'error', text: 'Please enter prices for all medicines' });
+            return;
+        }
+
+        try {
+            const updatedItems = order.items.map(item => ({
+                ...item,
+                price: Number(prices[item.requestId])
+            }));
+
+            const itemsTotal = updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const finalTotal = itemsTotal + (order.baseCharges || 45);
+
+            const orderRef = doc(db, 'orders', orderId);
+            await updateDoc(orderRef, {
+                items: updatedItems,
+                totalAmount: finalTotal,
+                isPricingPending: false,
+                orderStatus: 'confirmed', // Move to confirmed so riders see it
+                confirmedAt: serverTimestamp()
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setMessage({ type: 'success', text: 'Pricing saved and order confirmed!' });
+        } catch (error) {
+            console.error("Save pricing failed:", error);
+            setMessage({ type: 'error', text: 'Failed to save pricing' });
+        }
+    };
 
     const updateOrderStatus = async (orderId, newStatus) => {
         try {
@@ -164,6 +254,7 @@ const PharmacyDashboard = () => {
 
             await updateDoc(orderRef, updateData);
 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             let statusText = '';
             if (newStatus === 'confirmed') statusText = 'Order confirmed and assigned for pickup!';
             else if (newStatus === 'outForDelivery') statusText = 'Order marked as Out for Delivery!';
@@ -176,15 +267,17 @@ const PharmacyDashboard = () => {
     };
 
     const handleRejectOrder = async (orderId) => {
-        if (!window.confirm("Are you sure you want to reject this order?")) return;
         try {
             const orderRef = doc(db, 'orders', orderId);
             await updateDoc(orderRef, {
                 orderStatus: "rejected",
                 rejectedAt: serverTimestamp()
             });
-            setMessage({ type: 'success', text: 'Order rejected' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setMessage({ type: 'success', text: 'Order Rejected Successfully' });
+            setOrderToReject(null);
         } catch (error) {
+            console.error("Reject failed:", error);
             setMessage({ type: 'error', text: 'Failed to reject order' });
         }
     };
@@ -335,6 +428,39 @@ const PharmacyDashboard = () => {
                     </button>
                 </div>
             </header>
+
+            {/* Business Analytics Section */}
+            <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+            >
+                <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Today's Orders</p>
+                    <h3 className="text-3xl font-black text-gray-900">{analytics.todayOrders}</h3>
+                    <div className="flex items-center gap-1 mt-2 text-green-600 font-bold text-xs">
+                        <TrendingUp size={14} /> Total Received
+                    </div>
+                </div>
+                <div className="bg-[#2e7d32] p-6 rounded-[2rem] shadow-xl shadow-green-900/10 text-white">
+                    <p className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1">Today's Earnings</p>
+                    <h3 className="text-3xl font-black">₹{analytics.todayEarnings}</h3>
+                    <div className="flex items-center gap-1 mt-2 text-white/80 font-bold text-xs">
+                        <IndianRupee size={14} /> Direct Revenue
+                    </div>
+                </div>
+                <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Completed</p>
+                    <h3 className="text-3xl font-black text-gray-900">{analytics.todayCompleted}</h3>
+                    <div className="flex items-center gap-1 mt-2 text-[#2e7d32] font-bold text-xs">
+                        <CheckCircle2 size={14} /> Orders Delivered
+                    </div>
+                </div>
+                <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-center">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Performance</p>
+                    <p className="text-sm font-bold text-gray-700">Excellent business health today! Keep going.</p>
+                </div>
+            </motion.div>
 
             {activeTab === 'inventory' ? (
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -527,10 +653,15 @@ const PharmacyDashboard = () => {
                         <div className="space-y-6">
                             <AnimatePresence>
                                 {orders.map((order) => (
-                                    <motion.div key={order.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-6 md:p-8 rounded-[2rem] shadow-md border border-gray-100">
+                                    <motion.div key={order.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`p-6 md:p-8 rounded-[2rem] shadow-md border relative overflow-hidden ${order.isEmergency ? 'bg-red-50 border-red-300 shadow-red-900/10' : 'bg-white border-gray-100'}`}>
+                                        {order.isEmergency && (
+                                            <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-lg shadow-sm flex flex-col md:flex-row md:items-center gap-1 z-10 animate-pulse">
+                                                <AlertCircle size={14} className="inline mr-1" /> HIGH PRIORITY EMERGENCY
+                                            </div>
+                                        )}
 
                                         {/* Order Header */}
-                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-6 mb-6">
+                                        <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-6 mb-6 ${order.isEmergency ? 'border-red-200 mt-4' : 'border-gray-100'}`}>
                                             <div>
                                                 <div className="flex items-center gap-3 mb-2">
                                                     <span className="text-xl font-black text-gray-800">Order #{order.id.slice(-6).toUpperCase()}</span>
@@ -586,18 +717,42 @@ const PharmacyDashboard = () => {
                                             {/* Items List */}
                                             <div className="space-y-4">
                                                 <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Order Items</h3>
-                                                <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 max-h-48 overflow-y-auto space-y-3">
+                                                <div className={`rounded-2xl p-5 border max-h-48 overflow-y-auto space-y-3 ${order.isEmergency ? 'bg-white border-red-100' : 'bg-gray-50 border-gray-100'}`}>
                                                     {(order.items || []).map((item, idx) => (
-                                                        <div key={idx} className="flex justify-between items-center text-sm">
-                                                            <div className="flex items-center gap-3">
-                                                                <span className="font-bold text-gray-800">{item?.name || 'Unknown Item'}</span>
-                                                                <span className="text-[10px] font-bold text-gray-400 bg-white px-2 py-0.5 rounded-md border border-gray-200">
-                                                                    x{item?.quantity || 0}
-                                                                </span>
+                                                        <div key={idx} className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-gray-100 shadow-sm">
+                                                            <div className="flex justify-between items-center text-sm">
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="font-bold text-gray-800">{item?.name || 'Unknown Item'}</span>
+                                                                    <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-100">
+                                                                        x{item?.quantity || 0}
+                                                                    </span>
+                                                                </div>
+                                                                {!order.isPricingPending ? (
+                                                                    <span className="font-bold text-[#2e7d32]">₹{(item?.price || 0) * (item?.quantity || 0)}</span>
+                                                                ) : (
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="text-xs font-bold text-gray-400">Price per unit:</span>
+                                                                        <div className="relative w-24">
+                                                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">₹</span>
+                                                                            <input
+                                                                                type="number"
+                                                                                value={pricingInputs[order.id]?.[item.requestId] || ''}
+                                                                                onChange={(e) => handlePricingChange(order.id, item.requestId, e.target.value)}
+                                                                                className="w-full pl-5 pr-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold outline-none focus:border-[#2e7d32]"
+                                                                                placeholder="0"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                )}
                                                             </div>
-                                                            <span className="font-bold text-gray-700">₹{(item?.price || 0) * (item?.quantity || 0)}</span>
                                                         </div>
                                                     ))}
+                                                    {order.emergencyNotes && (
+                                                        <div className="pt-2 border-t border-red-100">
+                                                            <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-1">Customer Emergency Notes</p>
+                                                            <p className="text-sm font-bold text-gray-800 italic bg-red-100/50 p-3 rounded-xl border border-red-200">{order.emergencyNotes}</p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -628,16 +783,14 @@ const PharmacyDashboard = () => {
                                                 </div>
                                             </div>
                                         )}
-
-
-                                        {order.paymentMethod === 'UPI' && order.paymentScreenshotURL && (
+                                        {(order.prescriptionURL || (order.paymentMethod === 'UPI' && order.paymentScreenshotURL)) && (
                                             <div className="mt-8 p-6 bg-blue-50/50 rounded-3xl border border-blue-100 flex flex-col md:flex-row items-center gap-6">
                                                 <div className="shrink-0 group relative">
                                                     <img
-                                                        src={order.paymentScreenshotURL}
-                                                        alt="Payment Proof"
+                                                        src={order.prescriptionURL ? order.prescriptionURL : order.paymentScreenshotURL}
+                                                        alt={order.prescriptionURL ? "Prescription" : "Payment Proof"}
                                                         className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-2xl shadow-xl border-4 border-white cursor-zoom-in hover:scale-[1.02] transition-transform"
-                                                        onClick={() => window.open(order.paymentScreenshotURL, '_blank')}
+                                                        onClick={() => window.open(order.prescriptionURL || order.paymentScreenshotURL, '_blank')}
                                                     />
                                                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center pointer-events-none">
                                                         <Plus className="text-white" size={32} />
@@ -645,19 +798,23 @@ const PharmacyDashboard = () => {
                                                 </div>
                                                 <div className="text-center md:text-left space-y-2">
                                                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-white text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm border border-blue-50">
-                                                        <Info size={14} /> Verification Required
+                                                        <Info size={14} /> {order.prescriptionURL ? 'Prescription Review' : 'Verification Required'}
                                                     </div>
-                                                    <h4 className="text-lg font-black text-gray-800 italic tracking-tighter">Customer Payment Screenshot</h4>
+                                                    <h4 className="text-lg font-black text-gray-800 italic tracking-tighter">
+                                                        {order.prescriptionURL ? 'Customer Prescription Image' : 'Customer Payment Screenshot'}
+                                                    </h4>
                                                     <p className="text-sm font-bold text-gray-500 leading-relaxed max-w-md">
-                                                        Please verify this transaction in your bank/payment app before confirming the order. Click the image to view full size.
+                                                        {order.prescriptionURL 
+                                                            ? 'Please review the uploaded prescription carefully before confirming the exact medicine and price for this order.'
+                                                            : 'Please verify this transaction in your bank/payment app before confirming the order. Click the image to view full size.'}
                                                     </p>
                                                     <a
-                                                        href={order.paymentScreenshotURL}
+                                                        href={order.prescriptionURL || order.paymentScreenshotURL}
                                                         target="_blank"
                                                         rel="noreferrer"
                                                         className="text-[#2e7d32] font-black text-xs uppercase tracking-widest hover:underline inline-block mt-2"
                                                     >
-                                                        View Full Screenshot &rarr;
+                                                        View Full Image &rarr;
                                                     </a>
                                                 </div>
                                             </div>
@@ -667,18 +824,46 @@ const PharmacyDashboard = () => {
                                         <div className="mt-8 pt-6 border-t border-gray-100 flex gap-4 justify-end">
                                             {order.orderStatus === 'pending' && (
                                                 <>
-                                                    <button
-                                                        onClick={() => handleRejectOrder(order.id)}
-                                                        className="px-6 py-3 border-2 border-red-500 text-red-500 rounded-xl font-bold hover:bg-red-50 transition-all"
-                                                    >
-                                                        Reject Order
-                                                    </button>
-                                                    <button
-                                                        onClick={() => updateOrderStatus(order.id, 'confirmed')}
-                                                        className="px-8 py-3 bg-[#2e7d32] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#1b5e20] active:scale-95 transition-all shadow-lg shadow-green-900/10"
-                                                    >
-                                                        <Check size={18} /> Confirm & Assign Rider
-                                                    </button>
+                                                    {orderToReject === order.id ? (
+                                                        <div className="flex items-center gap-3 bg-red-50 p-2 rounded-xl border border-red-100">
+                                                            <span className="text-xs font-bold text-red-600 px-2">Reject this order?</span>
+                                                            <button
+                                                                onClick={() => handleRejectOrder(order.id)}
+                                                                className="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700 transition-all"
+                                                            >
+                                                                Yes, Reject
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setOrderToReject(null)}
+                                                                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-300 transition-all"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => setOrderToReject(order.id)}
+                                                            className="px-6 py-3 border-2 border-red-500 text-red-500 rounded-xl font-bold hover:bg-red-50 transition-all"
+                                                        >
+                                                            Reject Order
+                                                        </button>
+                                                    )}
+
+                                                    {order.isPricingPending ? (
+                                                        <button
+                                                            onClick={() => handleSavePricing(order.id)}
+                                                            className="px-8 py-3 bg-red-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-red-700 active:scale-95 transition-all shadow-lg shadow-red-900/10"
+                                                        >
+                                                            <Check size={18} /> Save Pricing & Confirm
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => updateOrderStatus(order.id, 'confirmed')}
+                                                            className="px-8 py-3 bg-[#2e7d32] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#1b5e20] active:scale-95 transition-all shadow-lg shadow-green-900/10"
+                                                        >
+                                                            <Check size={18} /> Confirm & Assign Rider
+                                                        </button>
+                                                    )}
                                                 </>
                                             )}
                                             {order.orderStatus === 'confirmed' && order.deliveryStatus === 'unassigned' && (

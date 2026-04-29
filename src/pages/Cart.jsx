@@ -4,15 +4,18 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, ChevronRight, MapPin, ShieldCheck, Zap, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { calculateDistance } from '../utils/geoUtils';
+import { db } from '../firebase';
+import { getDoc, doc } from 'firebase/firestore';
 import AddressModal from '../components/modals/AddressModal';
 import AddressPickerModal from '../components/modals/AddressPickerModal';
 
 const Cart = () => {
     const { cart, updateQuantity, removeFromCart, cartTotal } = useCart();
-    const { userData, currentUser } = useAuth();
+    const { userData } = useAuth();
     const navigate = useNavigate();
 
-    const addresses = userData?.addresses || [];
+    const addresses = React.useMemo(() => userData?.addresses || [], [userData?.addresses]);
     const [selectedAddressId, setSelectedAddressId] = React.useState(
         addresses.find(a => a.isDefault)?.id || addresses[0]?.id || null
     );
@@ -26,6 +29,42 @@ const Cart = () => {
             setSelectedAddressId(addresses.find(a => a.isDefault)?.id || addresses[0].id);
         }
     }, [addresses, selectedAddressId]);
+
+    const [deliveryFee, setDeliveryFee] = React.useState(25);
+    const [pharmacyData, setPharmacyData] = React.useState(null);
+
+    React.useEffect(() => {
+        const fetchPharmacy = async () => {
+            if (cart.length === 0) return;
+            const pharmaId = cart[0].pharmacyId;
+            if (!pharmaId) return;
+
+            try {
+                const pharmaDoc = await getDoc(doc(db, 'users', pharmaId));
+                if (pharmaDoc.exists()) {
+                    setPharmacyData(pharmaDoc.data());
+                }
+            } catch (err) {
+                console.error("Error fetching pharmacy info:", err);
+            }
+        };
+        fetchPharmacy();
+    }, [cart]);
+
+    React.useEffect(() => {
+        if (pharmacyData?.latitude && pharmacyData?.longitude && selectedAddressId) {
+            const addr = addresses.find(a => a.id === selectedAddressId);
+            if (addr?.latitude && addr?.longitude) {
+                const dist = calculateDistance(addr.latitude, addr.longitude, pharmacyData.latitude, pharmacyData.longitude);
+                if (dist < 1) setDeliveryFee(20);
+                else if (dist < 2) setDeliveryFee(24);
+                else if (dist < 3) setDeliveryFee(28);
+                else setDeliveryFee(32);
+            } else {
+                setDeliveryFee(25);
+            }
+        }
+    }, [pharmacyData, selectedAddressId, addresses]);
 
     const onAddAddress = (newAddr) => {
         setSelectedAddressId(newAddr.id);
@@ -210,7 +249,7 @@ const Cart = () => {
                             </div>
                             <div className="flex justify-between items-center text-gray-500 font-medium">
                                 <span>Delivery Fee</span>
-                                <span className="text-green-600 font-bold uppercase text-xs bg-green-50 px-2 py-1 rounded-md">Free</span>
+                                <span>₹{deliveryFee}</span>
                             </div>
                             <div className="flex justify-between items-center text-gray-500 font-medium pb-4 border-b border-gray-50">
                                 <span>Handling Charge</span>
@@ -218,7 +257,7 @@ const Cart = () => {
                             </div>
                             <div className="flex justify-between items-center text-gray-900 font-black text-xl pt-2">
                                 <span>To Pay</span>
-                                <span>₹{cartTotal + 2}</span>
+                                <span>₹{cartTotal + deliveryFee + 2}</span>
                             </div>
                         </div>
 

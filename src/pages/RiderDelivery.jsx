@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
-import { doc, getDoc, onSnapshot, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { motion } from 'framer-motion';
+import { doc, onSnapshot, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Phone, User, Package, CheckCircle2, ArrowLeft, Loader2, Navigation, ExternalLink, ShieldCheck } from 'lucide-react';
 
 const RiderDelivery = () => {
@@ -30,6 +30,7 @@ const RiderDelivery = () => {
             await updateDoc(orderRef, {
                 deliveryStatus: "outForDelivery"
             });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {
             console.error("Error updating to out for delivery:", error);
             alert("Failed to update status.");
@@ -37,6 +38,8 @@ const RiderDelivery = () => {
             setCompleting(false);
         }
     };
+
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleCompleteDelivery = async () => {
         try {
@@ -50,11 +53,13 @@ const RiderDelivery = () => {
                 paymentStatus: "paid"
             });
 
-            alert("Delivery completed!");
-            navigate('/rider-dashboard');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setIsSuccess(true);
+            setTimeout(() => {
+                navigate('/rider-dashboard');
+            }, 2500);
         } catch (error) {
             console.error("Error completing delivery:", error);
-            alert("Failed to complete delivery.");
         } finally {
             setCompleting(false);
         }
@@ -260,6 +265,34 @@ const RiderDelivery = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Success Overlay */}
+            <AnimatePresence>
+                {isSuccess && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="fixed inset-0 z-[100] bg-[#2e7d32] flex flex-col items-center justify-center text-white p-6 text-center"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ type: "spring", damping: 15 }}
+                            className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mb-8"
+                        >
+                            <CheckCircle2 size={48} />
+                        </motion.div>
+                        <h2 className="text-4xl font-black mb-4 tracking-tight">Delivery Completed!</h2>
+                        <p className="text-white/80 font-bold max-w-xs">Great job, Partner! Your earnings for this trip will be added shortly. Redirecting you back...</p>
+                        
+                        <div className="mt-12 flex items-center gap-2">
+                            <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                            <div className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

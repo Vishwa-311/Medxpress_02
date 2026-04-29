@@ -44,7 +44,6 @@ const RiderPickup = () => {
             navigate(`/rider-delivery/${orderId}`);
         } catch (error) {
             console.error("Error marking as picked up:", error);
-            alert("Failed to update status. Please try again.");
         } finally {
             setUpdating(false);
         }

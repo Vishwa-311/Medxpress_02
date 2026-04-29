@@ -3,16 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { arrayUnion, doc, updateDoc, addDoc, collection, serverTimestamp, getDoc } from 'firebase/firestore';
-import { ArrowLeft, MapPin, Phone, Building2, CreditCard, Wallet, Truck, CheckCircle2, Loader2, Info, X, Navigation, Plus, ChevronRight, Upload, Download, QrCode } from 'lucide-react';
+import { doc, addDoc, collection, serverTimestamp, getDoc, query, where, getDocs } from 'firebase/firestore';
+import { ArrowLeft, MapPin, Phone, Building2, CreditCard, Wallet, Truck, CheckCircle2, Loader2, Info, X, Navigation, Plus, ChevronRight, Upload, Download, QrCode, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getCurrentLocation } from '../utils/geoUtils';
+import { calculateDistance } from '../utils/geoUtils';
 import AddressModal from '../components/modals/AddressModal';
 import AddressPickerModal from '../components/modals/AddressPickerModal';
+import myMedicinesDb from '../data/medicines.json';
 
 const Checkout = () => {
-    const { cart, cartTotal, clearCart } = useCart();
-    const { userData, currentUser, logout, loading: authLoading } = useAuth();
+    const { cart, cartTotal, clearCart, removeFromCart, addToCart } = useCart();
+    const { userData, currentUser, loading: authLoading } = useAuth();
     const navigate = useNavigate();
 
     // Helper to deeply remove undefined values for Firestore
@@ -36,9 +37,19 @@ const Checkout = () => {
     const [orderSuccess, setOrderSuccess] = useState(false);
     const [pharmacyData, setPharmacyData] = useState(null);
     const [paymentMethod, setPaymentMethod] = useState('COD');
-    const [paymentScreenshot, setPaymentScreenshot] = useState(null);
-    const [paymentScreenshotPreview, setPaymentScreenshotPreview] = useState(null);
-    const [isFetchingPharma, setIsFetchingPharma] = useState(false);
+    const [prescription, setPrescription] = useState(null);
+    const [prescriptionPreview, setPrescriptionPreview] = useState(null);
+    const [deliveryFee, setDeliveryFee] = useState(25);
+    const [pharmacyInventory, setPharmacyInventory] = useState([]);
+    const [aiSuggestion, setAiSuggestion] = useState(null);
+    const [showAiModal, setShowAiModal] = useState(false);
+    const [hasSeenAiSuggestion, setHasSeenAiSuggestion] = useState(false);
+
+    // Check if any cart item requires a prescription strictly relying on the local JSON database
+    const isPrescriptionRequired = cart.some(item => {
+        const dbMed = myMedicinesDb.find(m => m.name === item.name);
+        return dbMed && dbMed.requiresPrescription === true;
+    });
 
     // Sync addresses from userData when it changes
     useEffect(() => {
@@ -50,7 +61,7 @@ const Checkout = () => {
         }
     }, [userData, selectedAddressId]);
 
-    // Fetch Pharmacy Data for Payment Options
+    // Fetch Pharmacy Data for Payment Options & AI Inventory
     useEffect(() => {
         const fetchPharmacy = async () => {
             if (cart.length === 0) return;
@@ -58,36 +69,58 @@ const Checkout = () => {
             if (!pharmaId) return;
 
             try {
-                setIsFetchingPharma(true);
                 const pharmaDoc = await getDoc(doc(db, 'users', pharmaId));
                 if (pharmaDoc.exists()) {
                     setPharmacyData(pharmaDoc.data());
                 }
+
+                // AI Background Inventory Fetch
+                const q = query(collection(db, 'medicines'), where('pharmacyId', '==', pharmaId));
+                const invSnapshot = await getDocs(q);
+                const inv = invSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                setPharmacyInventory(inv);
+
             } catch (err) {
                 console.error("Error fetching pharmacy info:", err);
             } finally {
-                setIsFetchingPharma(false);
+                // Done fetching pharmacy info
             }
         };
         fetchPharmacy();
     }, [cart]);
+
+    // Calculate Dynamic Delivery Fee
+    useEffect(() => {
+        if (pharmacyData?.latitude && pharmacyData?.longitude && selectedAddressId) {
+            const addr = addresses.find(a => a.id === selectedAddressId);
+            if (addr?.latitude && addr?.longitude) {
+                const dist = calculateDistance(addr.latitude, addr.longitude, pharmacyData.latitude, pharmacyData.longitude);
+                if (dist < 1) setDeliveryFee(20);
+                else if (dist < 2) setDeliveryFee(24);
+                else if (dist < 3) setDeliveryFee(28);
+                else setDeliveryFee(32);
+            } else {
+                setDeliveryFee(25); // fallback
+            }
+        }
+    }, [pharmacyData, selectedAddressId, addresses]);
 
     const onAddAddress = (newAddress) => {
         setAddresses(prev => [...prev, newAddress]);
         setSelectedAddressId(newAddress.id);
     };
 
-    const handleScreenshotChange = (e) => {
+    const handlePrescriptionChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setPaymentScreenshot(file);
+            setPrescription(file);
             const reader = new FileReader();
-            reader.onloadend = () => setPaymentScreenshotPreview(reader.result);
+            reader.onloadend = () => setPrescriptionPreview(reader.result);
             reader.readAsDataURL(file);
         }
     };
 
-    const handlePlaceOrder = async (e) => {
+    const handlePlaceOrder = async (e, bypassAI = false) => {
         e.preventDefault();
         if (cart.length === 0) return;
 
@@ -97,11 +130,69 @@ const Checkout = () => {
             return;
         }
 
+        // AI Checkout Interception Logic
+        if (!bypassAI && !hasSeenAiSuggestion && pharmacyInventory.length > 0) {
+            let bestSubstitution = null;
+            let originalCartItem = null;
+            let maxSavings = 0;
+
+            for (const item of cart) {
+                if (!item.category) continue;
+                // Match same category from pharmacy inventory, strictly lower price (with robust type checking)
+                const itemCat = String(item.category).toLowerCase().trim();
+                const itemPrice = Number(item.price);
+
+                const alternatives = pharmacyInventory.filter(invItem => {
+                    const invCat = String(invItem.category || "").toLowerCase().trim();
+                    const invPrice = Number(invItem.price || 0);
+                    const invStock = Number(invItem.stock || 0);
+
+                    return invCat === itemCat &&
+                        invPrice < itemPrice &&
+                        invStock >= Number(item.quantity) &&
+                        invItem.id !== item.medicineId;
+                });
+
+                if (alternatives.length > 0) {
+                    const cheapestAlt = alternatives.reduce((min, curr) => Number(curr.price) < Number(min.price) ? curr : min, alternatives[0]);
+                    const unitSavings = itemPrice - Number(cheapestAlt.price);
+                    const totalSavings = unitSavings * item.quantity;
+
+                    if (totalSavings > maxSavings) {
+                        maxSavings = totalSavings;
+                        bestSubstitution = cheapestAlt;
+                        originalCartItem = item;
+                    }
+                }
+            }
+
+            if (bestSubstitution && originalCartItem) {
+                setAiSuggestion({ original: originalCartItem, replacement: bestSubstitution, savings: maxSavings });
+                setShowAiModal(true);
+                setHasSeenAiSuggestion(true);
+                return; // PAUSE PLACING ORDER
+            }
+        }
+
         setIsPlacingOrder(true);
 
         try {
             const firstPharmacyId = cart[0]?.pharmacyId;
             if (!firstPharmacyId) throw new Error("Invalid cart data: missing pharmacy info.");
+
+            let prescriptionURL = null;
+            if (prescription) {
+                const base64Image = prescriptionPreview.split(',')[1];
+                const formData = new FormData();
+                formData.append('image', base64Image);
+
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=6c27feddb60aeeafcd67027ee83cd504`, {
+                    method: 'POST', body: formData
+                });
+                const data = await response.json();
+                if (!data.success) throw new Error("Failed to upload prescription image.");
+                prescriptionURL = data.data.display_url;
+            }
 
             const orderData = {
                 customerId: currentUser.uid,
@@ -119,7 +210,8 @@ const Checkout = () => {
                     pincode: finalAddress.pincode || ""
                 },
                 items: cart,
-                totalAmount: cartTotal + 2,
+                totalAmount: cartTotal + deliveryFee + 2, // dynamic delivery + ₹2 packaging
+                prescriptionURL,
                 paymentMethod: paymentMethod,
                 paymentStatus: "pending",
                 orderStatus: "pending",
@@ -153,12 +245,25 @@ const Checkout = () => {
                     <p className="text-gray-500 font-bold mb-8 text-lg">Your medicines are on the way.</p>
                     <div className="flex flex-col items-center gap-2">
                         <Loader2 className="animate-spin text-[#2e7d32]" size={24} />
-                        <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Opening tracking page...</p>
+                        <p className="text-gray-500 font-bold max-w-sm mx-auto uppercase tracking-widest text-xs">Redirecting to Live Tracking Dashboard...</p>
                     </div>
                 </motion.div>
             </div>
         );
     }
+
+    const handleApplySuggestion = () => {
+        // Switch the cart item and give them the massive discount
+        removeFromCart(aiSuggestion.original.medicineId);
+        // Add precisely the same quantity they ordered, passing ID explicitly since Context expects it
+        for (let i = 0; i < aiSuggestion.original.quantity; i++) {
+            addToCart({
+                ...aiSuggestion.replacement,
+                id: aiSuggestion.replacement.id
+            });
+        }
+        setShowAiModal(false);
+    };
 
     if (authLoading) {
         return (
@@ -315,7 +420,7 @@ const Checkout = () => {
                                                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
                                                     <Info size={14} /> Step-by-Step Payment
                                                 </div>
-                                                <h3 className="text-2xl font-black text-gray-800 italic tracking-tighter">Scan & Upload Screenshot</h3>
+                                                <h3 className="text-2xl font-black text-gray-800 italic tracking-tighter">Scan QR</h3>
                                                 <ul className="space-y-4 text-sm font-bold text-gray-500">
                                                     <li className="flex items-start gap-4">
                                                         <span className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs shrink-0">1</span>
@@ -323,7 +428,7 @@ const Checkout = () => {
                                                     </li>
                                                     <li className="flex items-start gap-4">
                                                         <span className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs shrink-0">2</span>
-                                                        <span>Complete the total payment of <span className="text-[#2e7d32]">₹{cartTotal + 2}</span> to the pharmacy.</span>
+                                                        <span>Complete the total payment of <span className="text-[#2e7d32]">₹{cartTotal + deliveryFee + 2}</span> to the pharmacy.</span>
                                                     </li>
                                                     <li className="flex items-start gap-4">
                                                         <span className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs shrink-0">3</span>
@@ -364,6 +469,39 @@ const Checkout = () => {
                                 )}
                             </AnimatePresence>
                         </section>
+
+                        {/* Prescription Upload Section - Conditionally Rendered */}
+                        {isPrescriptionRequired && (
+                            <section className="bg-white p-8 rounded-[2.5rem] border border-red-100 shadow-sm relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-red-50/50 rounded-bl-full -z-0" />
+                                <div className="flex items-center justify-between mb-6 relative z-10">
+                                    <h2 className="text-xl font-black text-gray-800 flex items-center gap-3">
+                                        <Upload size={24} className="text-red-500" />
+                                        Prescription Required
+                                    </h2>
+                                    <span className="text-[10px] bg-red-50 text-red-600 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-red-100">Mandatory</span>
+                                </div>
+
+                                <div
+                                    onClick={() => document.getElementById('checkoutPrescription').click()}
+                                    className={`w-full border-2 border-dashed ${prescriptionPreview ? 'border-[#2e7d32]' : 'border-red-200'} hover:border-red-400 bg-gray-50 rounded-[2rem] p-8 text-center cursor-pointer transition-all flex flex-col items-center justify-center relative overflow-hidden h-40 z-10`}
+                                >
+                                    {prescriptionPreview ? (
+                                        <>
+                                            <img src={prescriptionPreview} alt="Preview" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+                                            <div className="relative z-10 bg-white/90 px-6 py-3 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm text-gray-800"><CheckCircle2 size={18} className="text-[#2e7d32]" /> Prescription Attached</div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload size={32} className="text-red-400 mb-3" />
+                                            <p className="text-sm font-bold text-gray-800">Tap to upload prescription image</p>
+                                            <p className="text-[10px] text-red-500 mt-1 uppercase tracking-widest font-black">Required for Schedule H / High Power Drugs</p>
+                                        </>
+                                    )}
+                                    <input id="checkoutPrescription" type="file" accept="image/*" onChange={handlePrescriptionChange} className="hidden" />
+                                </div>
+                            </section>
+                        )}
                     </div>
                 </div>
 
@@ -399,7 +537,7 @@ const Checkout = () => {
                                 </div>
                                 <div className="flex justify-between items-center text-gray-500 font-bold text-sm">
                                     <span className="flex items-center gap-1">Delivery Fee <Info size={12} /></span>
-                                    <span className="text-[#2e7d32] font-black text-[10px] bg-green-50 px-2 py-0.5 rounded-md uppercase tracking-widest">Free</span>
+                                    <span className="text-gray-900 font-black">₹{deliveryFee}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-500 font-bold text-sm">
                                     <span>Packaging & Handling</span>
@@ -407,7 +545,7 @@ const Checkout = () => {
                                 </div>
                                 <div className="flex justify-between items-center pt-6 text-gray-900 font-black text-2xl tracking-tighter italic">
                                     <span>Total Payable</span>
-                                    <span className="text-[#2e7d32]">₹{cartTotal + 2}</span>
+                                    <span className="text-[#2e7d32]">₹{cartTotal + deliveryFee + 2}</span>
                                 </div>
                             </div>
 
@@ -420,7 +558,7 @@ const Checkout = () => {
 
                             <button
                                 onClick={handlePlaceOrder}
-                                disabled={isPlacingOrder || addresses.length === 0}
+                                disabled={isPlacingOrder || addresses.length === 0 || (isPrescriptionRequired && !prescriptionPreview)}
                                 className="w-full py-5 bg-[#2e7d32] text-white rounded-2xl font-black text-lg shadow-xl shadow-green-900/20 hover:bg-[#1b5e20] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed group"
                             >
                                 {isPlacingOrder ? (
@@ -452,6 +590,73 @@ const Checkout = () => {
                 userId={currentUser?.uid}
                 initialPhone={userData?.phone}
             />
+
+            {/* AI Suggestion Modal */}
+            <AnimatePresence>
+                {showAiModal && aiSuggestion && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        {/* Backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        />
+
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="bg-white rounded-[2rem] max-w-md w-full p-6 sm:p-8 shadow-2xl relative overflow-hidden z-10"
+                        >
+                            <div className="absolute -top-12 -right-12 w-32 h-32 bg-green-50 rounded-full blur-2xl -z-0" />
+
+                            <div className="relative z-10 text-center mb-8">
+                                <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-[#2e7d32] rounded-[1.5rem] mx-auto flex items-center justify-center mb-5 shadow-lg shadow-green-900/20">
+                                    <Zap size={40} className="text-white fill-white" />
+                                </div>
+                                <h2 className="text-[26px] leading-tight font-black text-gray-800 tracking-tight">AI Smart Savings</h2>
+                                <p className="text-gray-500 mt-3 font-medium text-sm">
+                                    You can instantly save <span className="text-green-600 font-black text-lg bg-green-50 px-2 py-0.5 rounded-md">₹{aiSuggestion.savings}</span> by switching to a completely equivalent alternative!
+                                </p>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 bg-gray-50 p-5 rounded-2xl border border-gray-100 relative z-10 mb-8 border-dashed">
+                                <div className="flex-1 text-center">
+                                    <img src={aiSuggestion.original.imageURL} alt={aiSuggestion.original.name} className="w-16 h-16 object-contain rounded-xl mx-auto bg-white mb-3 shadow-sm p-2 border border-gray-100 grayscale opacity-60" />
+                                    <p className="text-[11px] font-bold text-gray-400 line-through truncate px-2">{aiSuggestion.original.name}</p>
+                                    <p className="text-sm font-black text-gray-400">₹{aiSuggestion.original.price}</p>
+                                </div>
+
+                                <div className="text-gray-300 px-2"><ChevronRight size={24} /></div>
+
+                                <div className="flex-1 text-center relative">
+                                    <div className="absolute -top-3 -right-3 bg-green-500 text-white text-[9px] uppercase font-black tracking-widest px-2.5 py-1 rounded-full shadow-md z-10 animate-pulse">Save ₹{aiSuggestion.savings}</div>
+                                    <img src={aiSuggestion.replacement.imageURL} alt={aiSuggestion.replacement.name} className="w-16 h-16 object-contain rounded-xl mx-auto bg-white mb-3 shadow-lg p-2 border-2 border-green-400 ring-4 ring-green-50" />
+                                    <p className="text-[11px] font-black text-gray-800 truncate px-2 text-[#2e7d32]">{aiSuggestion.replacement.name}</p>
+                                    <p className="text-base font-black text-[#2e7d32]">₹{aiSuggestion.replacement.price}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3 relative z-10">
+                                <button
+                                    onClick={handleApplySuggestion}
+                                    className="w-full py-4 bg-gradient-to-r from-green-500 to-[#2e7d32] text-white font-black text-base rounded-[1.25rem] shadow-xl shadow-green-900/20 hover:shadow-green-900/30 active:scale-[0.98] transition-all flex justify-center items-center gap-2"
+                                >
+                                    <Zap size={20} className="fill-white" /> Yes, Switch & Save
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        setShowAiModal(false);
+                                        handlePlaceOrder(e, true);
+                                    }}
+                                    className="w-full py-4 bg-white border-2 border-gray-100 hover:bg-gray-50 text-gray-500 font-bold text-base rounded-[1.25rem] active:scale-[0.98] transition-all"
+                                >
+                                    No thanks, Continue
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

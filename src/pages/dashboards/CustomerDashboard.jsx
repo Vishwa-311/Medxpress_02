@@ -2,12 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { db } from '../../firebase';
-import { collection, getDocs, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, getDocs, query, where, onSnapshot, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { MapPin, Search, ShoppingBag, Store, Star, Clock, ChevronRight, Loader2, AlertCircle, ArrowLeft, Pill, User, X, Info, ShieldCheck, Zap, ClipboardList, CheckCircle2, Truck, Package, Bell, Plus, Minus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generateMedicineDetails } from '../../data/medicineDetails';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { isFuzzyMatch } from '../../utils/searchUtils';
+import EmergencyOrderModal from '../../components/modals/EmergencyOrderModal';
 
 const CustomerDashboard = () => {
     const { currentUser } = useAuth();
@@ -21,20 +22,32 @@ const CustomerDashboard = () => {
     const [filteredPharmacies, setFilteredPharmacies] = useState([]);
     const [selectedPharmacy, setSelectedPharmacy] = useState(null);
     const [medicines, setMedicines] = useState([]);
+    const [globalMedicines, setGlobalMedicines] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState(initialSearchMedicine);
     const [medSearchQuery, setMedSearchQuery] = useState('');
     const [selectedMedicine, setSelectedMedicine] = useState(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState('All');
     const [useManualLocation, setUseManualLocation] = useState(false);
+    
+    // Emergency Modal State
+    const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
 
     // Order History States
     const [orders, setOrders] = useState([]);
     const [activeDashboardTab, setActiveDashboardTab] = useState(location.state?.activeTab || 'pharmacies');
     const [loadingOrders, setLoadingOrders] = useState(false);
     const [toastMessage, setToastMessage] = useState(null);
+    const [cancellingOrderId, setCancellingOrderId] = useState(null);
+    const [, setTick] = useState(0);
+
+    // Refresh UI every minute to update cancellation windows
+    useEffect(() => {
+        const interval = setInterval(() => setTick(t => t + 1), 60000);
+        return () => clearInterval(interval);
+    }, []);
 
     // Handle incoming tab state from navigation (e.g. from Navbar)
     useEffect(() => {
@@ -77,23 +90,27 @@ const CustomerDashboard = () => {
 
     // Combined search + category filter (robust matching for combined categories like "Fever/Pain")
     const computedMedicines = useMemo(() => {
+        const queryTerms = medSearchQuery.toLowerCase().split(/[\s,]+/).filter(t => t.length > 0);
+        
         return medicines.filter(med => {
-            const matchesSearch = med.name.toLowerCase().includes(medSearchQuery.toLowerCase());
-
-            // Convert to lowercase for case-insensitive matching
-            const selectedCat = activeCategory.toLowerCase();
+            const medName = (med.name || "").toLowerCase();
             const medCat = (med.category || "").toLowerCase();
+            const selectedCat = activeCategory.toLowerCase();
 
-            // Debugging logs as requested
-            if (activeCategory !== 'All') {
-                console.log("Selected Category:", activeCategory);
-                console.log("Medicine Category:", med.category);
+            // 1. Matches Search (Multi-term Fuzzy)
+            let matchesSearch = true;
+            if (queryTerms.length > 0) {
+                // Should match ANY of the terms (OR logic) or ALL (AND logic)? 
+                // For symptoms, usually OR is better.
+                matchesSearch = queryTerms.some(term => 
+                    isFuzzyMatch(medName, term) || isFuzzyMatch(medCat, term)
+                );
             }
 
-            // Match if "All" is selected OR if the medicine's category string contains the selected chip
-            const matchesCategory = activeCategory === 'All' || medCat.includes(selectedCat);
+            // 2. Matches Category Chip
+            const matchesCategoryChip = activeCategory === 'All' || medCat.includes(selectedCat);
 
-            return matchesSearch && matchesCategory;
+            return matchesSearch && matchesCategoryChip;
         });
     }, [medicines, medSearchQuery, activeCategory]);
 
@@ -127,13 +144,27 @@ const CustomerDashboard = () => {
                 if (initialSearchMedicine) {
                     const medSnapshot = await getDocs(collection(db, "medicines"));
                     targetPharmacyIds = new Set();
+                    const queryTerms = initialSearchMedicine.toLowerCase().split(/[\s,]+/).filter(t => t.length > 0);
+                    const globalMeds = [];
 
                     medSnapshot.docs.forEach(doc => {
                         const medData = doc.data();
-                        if (isFuzzyMatch(medData.name, initialSearchMedicine)) {
+                        const medName = (medData.name || "").toLowerCase();
+                        const medCat = (medData.category || "").toLowerCase();
+
+                        const isMatch = queryTerms.some(term => 
+                            isFuzzyMatch(medName, term) || 
+                            isFuzzyMatch(medCat, term) ||
+                            (term === 'fever' && medCat.includes('fever')) ||
+                            (term === 'cold' && (medCat.includes('cold') || medCat.includes('cough') || medCat.includes('allergy')))
+                        );
+
+                        if (isMatch) {
                             targetPharmacyIds.add(medData.pharmacyId);
+                            globalMeds.push({ id: doc.id, ...medData });
                         }
                     });
+                    setGlobalMedicines(globalMeds);
                 }
 
                 const pharmacyQuery = query(collection(db, "users"), where("role", "==", "pharmacy"));
@@ -179,12 +210,14 @@ const CustomerDashboard = () => {
 
         startWatching();
         return () => { if (watchId !== null) navigator.geolocation.clearWatch(watchId); };
-    }, []);
+    }, [initialSearchMedicine]);
 
     // 4) FILTER PHARMACIES REACTIVELY
+    // 4) FILTER PHARMACIES & GLOBAL SEARCH REACTIVELY
     useEffect(() => {
         if (userLat === undefined || userLng === undefined || pharmacies.length === 0) return;
 
+        // Standard Pharmacy Filtering (within 1km)
         const filtered = pharmacies.filter((pharma) => {
             const distance = getDistance(userLat, userLng, pharma.latitude, pharma.longitude);
             const matchesSearch = pharma.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -195,6 +228,64 @@ const CustomerDashboard = () => {
         }));
 
         setFilteredPharmacies(filtered);
+
+        // GLOBAL MEDICINE SEARCH LOGIC (within 10km)
+        const searchForMedicines = async () => {
+            if (searchQuery.length < 2) {
+                setGlobalMedicines([]);
+                return;
+            }
+
+            try {
+                const medSnapshot = await getDocs(collection(db, "medicines"));
+                const queryTerms = searchQuery.toLowerCase().split(/[\s,]+/).filter(t => t.length > 0);
+                
+                const SYMPTOM_MAP = {
+                    'fever': ['fever', 'pain', 'body ache', 'paracetamol', 'dolo', 'crocin'],
+                    'cold': ['cold', 'cough', 'allergy', 'nose', 'flu', 'respiratory'],
+                    'vomiting': ['stomach', 'nausea', 'vomit', 'digestion'],
+                    'diarrhea': ['stomach', 'loose motion', 'ors', 'dehydration']
+                };
+
+                const expanded = new Set([...queryTerms]);
+                queryTerms.forEach(t => SYMPTOM_MAP[t]?.forEach(st => expanded.add(st)));
+                const finalTerms = Array.from(expanded);
+
+                const pharmaMap = new Map(pharmacies.map(p => [p.id, p]));
+                
+                const matches = medSnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
+                    .filter(med => {
+                        const pharma = pharmaMap.get(med.pharmacyId);
+                        if (!pharma) return false;
+                        
+                        const dist = getDistance(userLat, userLng, pharma.latitude, pharma.longitude);
+                        if (dist > 1) return false; // Reverted to 1km radius
+
+                        const medName = (med.name || "").toLowerCase();
+                        const medCat = (med.category || "").toLowerCase();
+                        
+                        return finalTerms.some(term => 
+                            isFuzzyMatch(medName, term) || 
+                            isFuzzyMatch(medCat, term)
+                        );
+                    })
+                    .map(med => {
+                        const pharma = pharmaMap.get(med.pharmacyId);
+                        return { 
+                            ...med, 
+                            pharmacyName: pharma.name, 
+                            distance: getDistance(userLat, userLng, pharma.latitude, pharma.longitude) 
+                        };
+                    })
+                    .sort((a, b) => a.price - b.price);
+
+                setGlobalMedicines(matches);
+            } catch (err) {
+                console.error("Global search error:", err);
+            }
+        };
+
+        searchForMedicines();
     }, [userLat, userLng, pharmacies, searchQuery]);
 
     // 5) FETCH CUSTOMER ORDERS (REAL-TIME & PERSISTENT)
@@ -241,8 +332,21 @@ const CustomerDashboard = () => {
                     return { ...data, id: doc.id, _sortMillis: Number(millis) || 0 };
                 });
 
-                // 2. Stable Newest-First Sort (Desc)
+                // 2. Stable Newest-First Sort (Desc) with Priority grouping
                 fetchedOrders.sort((a, b) => {
+                    // Group 1: Ongoing (Pending, Confirmed, Picked Up, etc.)
+                    // Group 2: Finalized (Completed, Cancelled, Rejected)
+                    const isOngoing = (status, deliveryStatus) => 
+                        ['pending', 'confirmed'].includes(status) && 
+                        !['delivered', 'cancelled'].includes(deliveryStatus);
+                    
+                    const ongoingA = isOngoing(a.orderStatus, a.deliveryStatus);
+                    const ongoingB = isOngoing(b.orderStatus, b.deliveryStatus);
+
+                    if (ongoingA && !ongoingB) return -1;
+                    if (!ongoingA && ongoingB) return 1;
+
+                    // Within same group, sort by timestamp
                     const diff = b._sortMillis - a._sortMillis;
                     if (diff !== 0) return diff;
                     return b.id.localeCompare(a.id); // Tie-breaker for same-time orders
@@ -303,7 +407,39 @@ const CustomerDashboard = () => {
         });
 
         return () => unsubscribe();
-    }, [currentUser?.uid]);
+    }, [currentUser?.uid, orders.length]);
+
+    const handleCancelOrder = async (orderId) => {
+        if (cancellingOrderId !== orderId) {
+            setCancellingOrderId(orderId);
+            setTimeout(() => setCancellingOrderId(null), 5000); // Reset after 5s if not clicked again
+            return;
+        }
+        try {
+            const orderRef = doc(db, 'orders', orderId);
+            await updateDoc(orderRef, {
+                orderStatus: 'cancelled',
+                deliveryStatus: 'cancelled',
+                cancelledAt: serverTimestamp()
+            });
+            setCancellingOrderId(null);
+            setToastMessage({
+                title: "Order Cancelled",
+                desc: "Your order has been successfully cancelled."
+            });
+            setTimeout(() => setToastMessage(null), 5000);
+        } catch (err) {
+            console.error("Cancel failed:", err);
+            alert("Failed to cancel order.");
+        }
+    };
+
+    const isCancellable = (order) => {
+        if (order.orderStatus !== 'pending') return false;
+        const createdMillis = order.createdAt?.toMillis ? order.createdAt.toMillis() : (order.createdAt?.seconds * 1000) || Date.now();
+        const diff = (Date.now() - createdMillis) / 1000;
+        return diff < 300; // 5 minutes
+    };
 
     const handlePharmacyClick = async (pharma) => {
         setLoading(true);
@@ -317,9 +453,16 @@ const CustomerDashboard = () => {
 
             // Sort so that the searched medicine is at the top
             if (initialSearchMedicine) {
+                const queryTerms = initialSearchMedicine.toLowerCase().split(/[\s,]+/).filter(t => t.length > 0);
                 medsList.sort((a, b) => {
-                    const aMatches = isFuzzyMatch(a.name, initialSearchMedicine);
-                    const bMatches = isFuzzyMatch(b.name, initialSearchMedicine);
+                    const aName = (a.name || "").toLowerCase();
+                    const aCat = (a.category || "").toLowerCase();
+                    const bName = (b.name || "").toLowerCase();
+                    const bCat = (b.category || "").toLowerCase();
+
+                    const aMatches = queryTerms.some(term => isFuzzyMatch(aName, term) || isFuzzyMatch(aCat, term));
+                    const bMatches = queryTerms.some(term => isFuzzyMatch(bName, term) || isFuzzyMatch(bCat, term));
+                    
                     if (aMatches && !bMatches) return -1;
                     if (!aMatches && bMatches) return 1;
                     return 0;
@@ -498,6 +641,18 @@ const CustomerDashboard = () => {
                                         >
                                             View Full Tracking <ChevronRight size={16} />
                                         </button>
+                                        {isCancellable(order) && (
+                                            <button
+                                                onClick={() => handleCancelOrder(order.id)}
+                                                className={`px-6 py-2.5 border-2 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all text-sm ${
+                                                    cancellingOrderId === order.id 
+                                                    ? 'bg-red-600 text-white border-red-600 animate-pulse' 
+                                                    : 'bg-red-50 text-red-600 border-red-100 hover:bg-red-100'
+                                                }`}
+                                            >
+                                                {cancellingOrderId === order.id ? 'Click to Confirm Cancel' : 'Cancel Order'}
+                                            </button>
+                                        )}
                                     </div>
 
                                 </motion.div>
@@ -513,7 +668,7 @@ const CustomerDashboard = () => {
                             <Search className="text-gray-400 mr-3" size={24} />
                             <input
                                 type="text"
-                                placeholder="Search for pharmacies near you..."
+                                placeholder="Search for medicines, symptoms or pharmacies..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="border-none outline-none flex-grow text-lg py-2 font-medium"
@@ -521,60 +676,117 @@ const CustomerDashboard = () => {
                         </div>
                     </div>
 
-                    <h2 className="text-2xl md:text-3xl font-extrabold mb-8 text-gray-800">Medical Stores Near You</h2>
+                    {/* Conditional Rendering: Search Mode vs Directory Mode */}
+                    {searchQuery.length >= 2 ? (
+                        <div className="mb-20">
+                            <div className="flex items-center justify-between mb-8">
+                                <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800 flex items-center gap-3">
+                                    <Pill className="text-[#2e7d32]" size={28} /> 
+                                    {globalMedicines.length > 0 ? `Medicine Results for "${searchQuery}"` : `No direct matches for "${searchQuery}"`}
+                                </h2>
+                                {globalMedicines.length > 0 && (
+                                    <span className="text-sm font-bold text-[#2e7d32] bg-green-50 px-4 py-2 rounded-xl">
+                                        Sorted by Lowest Price
+                                    </span>
+                                )}
+                            </div>
 
-                    {loading && pharmacies.length === 0 ? (
-                        <div className="py-32 flex flex-col items-center justify-center"><Loader2 className="animate-spin text-[#2e7d32] mb-4" size={50} /><p className="font-bold text-gray-400">Finding pharmacies...</p></div>
-                    ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                            {filteredPharmacies.map(pharma => (
-                                <motion.div
-                                    key={pharma.id}
-                                    whileHover={{ y: -10 }}
-                                    onClick={() => handlePharmacyClick(pharma)}
-                                    className="bg-white p-6 rounded-[2.5rem] shadow-lg border border-gray-50 cursor-pointer hover:shadow-2xl transition-all group"
-                                >
-                                    <div className="flex flex-col sm:flex-row items-center gap-6">
-                                        <div className="w-24 h-24 bg-green-50 rounded-[2rem] flex items-center justify-center text-5xl shadow-inner group-hover:bg-green-100 transition-colors shrink-0">
-                                            🏥
-                                        </div>
-                                        <div className="flex-grow text-center sm:text-left">
-                                            <h3 className="text-xl font-extrabold text-gray-800 mb-1">{pharma.name}</h3>
-                                            <p className="text-gray-500 font-medium mb-3 line-clamp-1">{pharma.address || "Medical Store"}</p>
-                                            <div className="flex items-center justify-center sm:justify-start gap-4">
-                                                <span className="bg-green-100 text-[#2e7d32] px-3 py-1 rounded-full text-xs font-black flex items-center gap-1">
-                                                    <MapPin size={12} /> {(pharma.distance * 1000).toFixed(0)}m AWAY
-                                                </span>
-                                                <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-black flex items-center gap-1">
-                                                    4.5 <Star size={12} fill="currentColor" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))}
-
-                            {filteredPharmacies.length === 0 && !loading && (
-                                <div className="col-span-full py-24 text-center bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
-                                    <Store size={80} className="mx-auto text-gray-200 mb-6" />
-                                    <h3 className="text-2xl font-black text-gray-300">No pharmacies found within 1km.</h3>
-                                    <p className="text-gray-400 mt-2 font-medium mb-8">Try checking your GPS settings (or try refreshing the page).</p>
-
-                                    {!useManualLocation && (
-                                        <button
-                                            onClick={() => {
-                                                setUseManualLocation(true);
-                                                // For demo/fallback, we'll just show all pharmacies if manual is on
-                                                setFilteredPharmacies(pharmacies);
-                                            }}
-                                            className="px-8 py-3 bg-white border-2 border-[#2e7d32] text-[#2e7d32] rounded-xl font-bold hover:bg-green-50 transition-all shadow-sm"
+                            {globalMedicines.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {globalMedicines.map(med => (
+                                        <motion.div
+                                            key={med.id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            whileHover={{ y: -8, shadow: "0 25px 30px -10px rgb(0 0 0 / 0.15)" }}
+                                            onClick={() => handlePharmacyClick(pharmacies.find(p => p.id === med.pharmacyId))}
+                                            className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 cursor-pointer hover:border-[#2e7d32]/40 transition-all flex flex-col group relative overflow-hidden"
                                         >
-                                            Show All Pharmacies (Manual Mode)
-                                        </button>
-                                    )}
+                                            {/* Top Section: Pharmacy Attribution */}
+                                            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-50">
+                                                <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center text-[#2e7d32] shrink-0">
+                                                    <Store size={16} />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Available at</p>
+                                                    <h4 className="text-sm font-black text-gray-800 truncate leading-none">{med.pharmacyName}</h4>
+                                                </div>
+                                                <div className="ml-auto text-[10px] font-bold text-gray-400 whitespace-nowrap bg-gray-50 px-2 py-1 rounded-md">
+                                                    {(med.distance * 1000).toFixed(0)}m away
+                                                </div>
+                                            </div>
+
+                                            <div className="flex gap-5 items-center">
+                                                <div className="w-24 h-24 bg-gray-50 rounded-2xl overflow-hidden p-2 shrink-0 border border-gray-100 group-hover:bg-white transition-colors relative z-10">
+                                                    <img src={med.imageURL} alt={med.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                                                </div>
+                                                <div className="flex-grow min-w-0 relative z-10">
+                                                    <h3 className="text-xl font-black text-gray-800 mb-1 group-hover:text-[#2e7d32] transition-colors">{med.name}</h3>
+                                                    <p className="text-xs font-bold text-gray-400 mb-3">{med.category}</p>
+                                                    
+                                                    <div className="flex items-baseline gap-1">
+                                                        <span className="text-3xl font-black text-[#2e7d32]">₹{med.price}</span>
+                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">/ strip</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-6 flex items-center justify-between">
+                                                <div className="flex items-center gap-1 text-yellow-500">
+                                                    <Star size={12} fill="currentColor" />
+                                                    <span className="text-xs font-black text-gray-600">4.8</span>
+                                                </div>
+                                                <div className="text-[10px] font-black text-white bg-[#2e7d32] px-4 py-2 rounded-xl uppercase tracking-widest shadow-lg shadow-green-900/10 flex items-center gap-2 group-hover:bg-[#1b5e20] transition-colors">
+                                                    Select Pharmacy <ChevronRight size={12} />
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="py-20 text-center bg-white rounded-[3rem] border border-gray-100 shadow-sm">
+                                    <Search size={60} className="mx-auto text-gray-200 mb-6" />
+                                    <h3 className="text-2xl font-black text-gray-300">No matching medicines found.</h3>
+                                    <p className="text-gray-400 mt-2 font-medium">Try searching for a different symptom or pharmacy name below.</p>
                                 </div>
                             )}
                         </div>
+                    ) : (
+                        <>
+                            <h2 className="text-2xl md:text-3xl font-extrabold mb-8 text-gray-800">Medical Stores Near You</h2>
+                            {loading && pharmacies.length === 0 ? (
+                                <div className="py-32 flex flex-col items-center justify-center"><Loader2 className="animate-spin text-[#2e7d32] mb-4" size={50} /><p className="font-bold text-gray-400">Finding pharmacies...</p></div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                                    {filteredPharmacies.map(pharma => (
+                                        <motion.div
+                                            key={pharma.id}
+                                            whileHover={{ y: -10 }}
+                                            onClick={() => handlePharmacyClick(pharma)}
+                                            className="bg-white p-6 rounded-[2.5rem] shadow-lg border border-gray-50 cursor-pointer hover:shadow-2xl transition-all group"
+                                        >
+                                            <div className="flex flex-col sm:flex-row items-center gap-6">
+                                                <div className="w-24 h-24 bg-green-50 rounded-[2rem] flex items-center justify-center text-5xl shadow-inner group-hover:bg-green-100 transition-colors shrink-0">
+                                                    🏥
+                                                </div>
+                                                <div className="flex-grow text-center sm:text-left">
+                                                    <h3 className="text-xl font-extrabold text-gray-800 mb-1">{pharma.name}</h3>
+                                                    <p className="text-gray-500 font-medium mb-3 line-clamp-1">{pharma.address || "Medical Store"}</p>
+                                                    <div className="flex items-center justify-center sm:justify-start gap-4">
+                                                        <span className="bg-green-100 text-[#2e7d32] px-3 py-1 rounded-full text-xs font-black flex items-center gap-1">
+                                                            <MapPin size={12} /> {(pharma.distance * 1000).toFixed(0)}m AWAY
+                                                        </span>
+                                                        <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-black flex items-center gap-1">
+                                                            4.5 <Star size={12} fill="currentColor" />
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            )}
+                        </>
                     )}
                 </>
             ) : (
@@ -791,7 +1003,6 @@ const CustomerDashboard = () => {
                                     </div>
                                     <h2 className="text-2xl md:text-3xl font-black text-gray-800 leading-tight mb-1">{selectedMedicine.name}</h2>
                                     <p className="text-gray-400 font-bold mb-4">{selectedMedicine.details.stripDetails}</p>
-
                                     <div className="bg-[#2e7d32]/5 p-4 rounded-2xl border border-[#2e7d32]/10 flex items-center justify-between">
                                         <div>
                                             <p className="text-[10px] font-black text-[#2e7d32] uppercase tracking-widest mb-1">Price per strip</p>
@@ -929,6 +1140,29 @@ const CustomerDashboard = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Emergency Floating Button */}
+            <motion.button
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsEmergencyModalOpen(true)}
+                className="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-16 h-16 bg-red-600 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.5)] flex items-center justify-center z-[1000] border-4 border-white"
+            >
+                <div className="absolute inset-0 bg-red-600 rounded-full animate-ping opacity-60"></div>
+                <div className="text-white relative z-10 flex flex-col items-center">
+                    <span className="text-2xl leading-none font-black">+</span>
+                </div>
+            </motion.button>
+
+            {/* Emergency Order Modal */}
+            <EmergencyOrderModal 
+                isOpen={isEmergencyModalOpen}
+                onClose={() => setIsEmergencyModalOpen(false)}
+                userLat={userLat}
+                userLng={userLng}
+            />
         </div>
     );
 };

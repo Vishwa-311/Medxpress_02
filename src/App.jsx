@@ -19,6 +19,7 @@ import OrderTracking from './pages/OrderTracking';
 import Profile from './pages/Profile';
 import PharmacyProfile from './pages/PharmacyProfile';
 import RiderProfile from './pages/RiderProfile';
+import ScrollToTop from './components/utils/ScrollToTop';
 import './styles/index.css';
 import { Loader2 } from 'lucide-react';
 
@@ -118,6 +119,7 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <Router>
+          <ScrollToTop />
           <div className="App min-h-screen bg-[#f9fbf9]">
             <Navbar />
             <Routes>

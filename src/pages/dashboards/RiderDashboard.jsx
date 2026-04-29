@@ -111,7 +111,11 @@ const RiderDashboard = () => {
             }
 
             // EXPLICIT: Sort by Recently Placed (Top priority as requested by user)
-            ordersData.sort((a, b) => b._sortMillis - a._sortMillis);
+            ordersData.sort((a, b) => {
+                if (a.isEmergency && !b.isEmergency) return -1;
+                if (!a.isEmergency && b.isEmergency) return 1;
+                return b._sortMillis - a._sortMillis;
+            });
 
             setAvailableOrders(ordersData);
         });
@@ -139,7 +143,9 @@ const RiderDashboard = () => {
                 try {
                     const pharmaSnap = await getDoc(doc(db, 'users', data.pharmacyId));
                     if (pharmaSnap.exists()) pharmacyName = pharmaSnap.data().name;
-                } catch (err) { }
+                } catch (err) {
+                    console.error("Error fetching pharmacy name:", err);
+                }
 
                 activeData.push({ 
                     id: orderDoc.id, 
@@ -150,7 +156,11 @@ const RiderDashboard = () => {
             }
 
             // EXPLICIT: Sort by Recently Placed (Top priority as requested by user)
-            activeData.sort((a, b) => b._sortMillis - a._sortMillis);
+            activeData.sort((a, b) => {
+                if (a.isEmergency && !b.isEmergency) return -1;
+                if (!a.isEmergency && b.isEmergency) return 1;
+                return b._sortMillis - a._sortMillis;
+            });
 
             setActiveOrders(activeData);
             setLoading(false);
@@ -331,9 +341,14 @@ const RiderDashboard = () => {
                                             key={order.id}
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            className="bg-white rounded-[2.5rem] border-2 border-[#2e7d32] p-8 shadow-xl shadow-green-900/10 relative overflow-hidden group"
+                                            className={`rounded-[2.5rem] border-2 p-8 shadow-xl relative overflow-hidden group ${order.isEmergency ? 'bg-red-50 border-red-500 shadow-red-900/20' : 'bg-white border-[#2e7d32] shadow-green-900/10'}`}
                                         >
-                                            <div className="absolute right-0 top-0 w-24 h-24 bg-[#2e7d32]/5 rounded-bl-[100%] transition-all group-hover:w-28 group-hover:h-28"></div>
+                                            {order.isEmergency && (
+                                                <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-lg shadow-sm z-[20] animate-pulse">
+                                                    EMERGENCY TASK
+                                                </div>
+                                            )}
+                                            <div className={`absolute right-0 top-0 w-24 h-24 rounded-bl-[100%] transition-all group-hover:w-28 group-hover:h-28 ${order.isEmergency ? 'bg-red-500/10' : 'bg-[#2e7d32]/5'}`}></div>
                                             <div className="flex flex-col md:flex-row justify-between gap-6 relative z-10">
                                                 <div className="space-y-4 flex-grow">
                                                     <div className="flex items-center gap-3 mb-2">
@@ -389,9 +404,14 @@ const RiderDashboard = () => {
                                                 initial={{ opacity: 0, scale: 0.95 }}
                                                 animate={{ opacity: 1, scale: 1 }}
                                                 exit={{ opacity: 0, scale: 0.95 }}
-                                                className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-sm hover:shadow-xl transition-all group"
+                                                className={`rounded-[2.5rem] border p-8 hover:shadow-xl transition-all group relative overflow-hidden ${order.isEmergency ? 'bg-red-50 border-red-300 shadow-red-900/10' : 'bg-white border-gray-100 shadow-sm'}`}
                                             >
-                                                <div className="flex flex-col md:flex-row justify-between gap-6">
+                                                {order.isEmergency && (
+                                                    <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-lg shadow-sm z-[20] animate-pulse">
+                                                        EMERGENCY
+                                                    </div>
+                                                )}
+                                                <div className="flex flex-col md:flex-row justify-between gap-6 relative z-10">
                                                     <div className="space-y-4 flex-grow">
                                                         <div className="flex items-center gap-3">
                                                             <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-[#2e7d32]">

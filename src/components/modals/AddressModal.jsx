@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { X, MapPin, Phone, Navigation, Loader2 } from 'lucide-react';
+import { X, Phone, Navigation, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getCurrentLocation } from '../../utils/geoUtils';
 import { useAuth } from '../../context/AuthContext';
 
 const AddressModal = ({ isOpen, onClose, onAdd, initialPhone }) => {
-    const { saveAddress } = useAuth();
+    const { saveAddress, userData } = useAuth();
     const [form, setForm] = useState({
         label: 'Home',
         addressLine: '',
