@@ -180,7 +180,9 @@ const OrderTracking = () => {
                         <div className="bg-white/10 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/20">
                             <p className={`${order.orderStatus === 'cancelled' ? 'text-red-200' : 'text-green-100'} text-xs font-bold uppercase tracking-widest mb-1 transition-colors`}>Status</p>
                             <p className="font-black text-xl capitalize">
-                                {order.isPricingPending ? 'Pricing in Progress' : (order.orderStatus === 'pending' ? 'Order Placed' : order.orderStatus)}
+                                {order.isPricingPending && order.pharmacyId !== 'broadcast' ? 'Pricing in Progress' : 
+                                 order.pharmacyId === 'broadcast' ? 'Searching for nearby Pharmacies...' :
+                                 (order.orderStatus === 'pending' ? 'Order Placed' : order.orderStatus)}
                             </p>
                         </div>
                     </div>
@@ -198,36 +200,51 @@ const OrderTracking = () => {
                 {/* Progress Bar */}
                 {order.orderStatus !== 'cancelled' && (
                     <div className="p-8 md:p-12 border-b border-gray-50">
-                        <div className="relative flex justify-between">
-                            {/* Line Background */}
-                            <div className="absolute top-5 left-0 w-full h-1 bg-gray-100 -z-0" />
-                            {/* Line Foreground */}
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${(currentStepIndex / (statusSteps.length - 1)) * 100}%` }}
-                                className="absolute top-5 left-0 h-1 bg-[#2e7d32] -z-0"
-                            />
-
-                            {statusSteps.map((step, index) => {
-                                const isCompleted = index <= currentStepIndex;
-                                const isActive = index === currentStepIndex;
-
-                                return (
-                                    <div key={step.id} className="relative z-10 flex flex-col items-center gap-3">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-4 transition-all duration-500 ${isCompleted ? 'bg-white border-[#2e7d32] text-[#2e7d32]' : 'bg-white border-gray-100 text-gray-300'
-                                            } ${isActive ? 'scale-125 shadow-lg shadow-green-900/10' : ''}`}>
-                                            {step.icon}
-                                        </div>
-                                        <div className="text-center">
-                                            <p className={`text-[10px] md:text-xs font-black uppercase tracking-tight ${isCompleted ? 'text-gray-800' : 'text-gray-300'}`}>
-                                                {step.label}
-                                            </p>
-                                            {isActive && <p className="text-[9px] font-bold text-[#2e7d32]">{step.time}</p>}
-                                        </div>
+                        {order.pharmacyId === 'broadcast' ? (
+                            <div className="flex flex-col items-center justify-center py-10 gap-6">
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-[#2e7d32]/20 rounded-full animate-ping" />
+                                    <div className="relative w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-[#2e7d32]">
+                                        <Siren size={40} className="animate-pulse" />
                                     </div>
-                                );
-                            })}
-                        </div>
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="text-xl font-black text-gray-800">Broadcasting Emergency</h3>
+                                    <p className="text-gray-500 font-bold max-w-xs mt-1">Alerting all pharmacies within 10km. Please stay on this screen.</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="relative flex justify-between">
+                                {/* Line Background */}
+                                <div className="absolute top-5 left-0 w-full h-1 bg-gray-100 -z-0" />
+                                {/* Line Foreground */}
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${(currentStepIndex / (statusSteps.length - 1)) * 100}%` }}
+                                    className="absolute top-5 left-0 h-1 bg-[#2e7d32] -z-0"
+                                />
+
+                                {statusSteps.map((step, index) => {
+                                    const isCompleted = index <= currentStepIndex;
+                                    const isActive = index === currentStepIndex;
+
+                                    return (
+                                        <div key={step.id} className="relative z-10 flex flex-col items-center gap-3">
+                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-4 transition-all duration-500 ${isCompleted ? 'bg-white border-[#2e7d32] text-[#2e7d32]' : 'bg-white border-gray-100 text-gray-300'
+                                                } ${isActive ? 'scale-125 shadow-lg shadow-green-900/10' : ''}`}>
+                                                {step.icon}
+                                            </div>
+                                            <div className="text-center">
+                                                <p className={`text-[10px] md:text-xs font-black uppercase tracking-tight ${isCompleted ? 'text-gray-800' : 'text-gray-300'}`}>
+                                                    {step.label}
+                                                </p>
+                                                {isActive && <p className="text-[9px] font-bold text-[#2e7d32]">{step.time}</p>}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 )}
 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase';
-import { collection, addDoc, query, getDocs, doc, getDoc, serverTimestamp, updateDoc, where, onSnapshot } from 'firebase/firestore';
-import { Plus, Upload, Loader2, Package, IndianRupee, Image as ImageIcon, AlertCircle, CheckCircle2, Pill, ClipboardList, MapPin, Phone, Check, Truck, Info, TrendingUp } from 'lucide-react';
+import { collection, addDoc, query, getDocs, doc, getDoc, serverTimestamp, updateDoc, where, onSnapshot, or } from 'firebase/firestore';
+import { Plus, Upload, Loader2, Package, IndianRupee, Image as ImageIcon, AlertCircle, CheckCircle2, Pill, ClipboardList, MapPin, Phone, Check, Truck, Info, TrendingUp, Siren } from 'lucide-react';
+import { calculateDistance } from '../../utils/geoUtils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const PharmacyDashboard = () => {
@@ -18,6 +19,8 @@ const PharmacyDashboard = () => {
     const [orders, setOrders] = useState([]);
     const [activeTab, setActiveTab] = useState('inventory'); // 'inventory' | 'orders'
     const [loading, setLoading] = useState(true);
+    const [pharmaData, setPharmaData] = useState(null);
+    const [acceptingId, setAcceptingId] = useState(null);
     const [message, setMessage] = useState({ type: '', text: '' });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -29,6 +32,17 @@ const PharmacyDashboard = () => {
     const [orderToReject, setOrderToReject] = useState(null);
     const [analytics, setAnalytics] = useState({ todayOrders: 0, todayEarnings: 0, todayCompleted: 0 });
     const [pricingInputs, setPricingInputs] = useState({}); // { orderId: { itemId: price } }
+
+    useEffect(() => {
+        if (!currentUser?.uid) return;
+        const fetchPharma = async () => {
+            const docSnap = await getDoc(doc(db, 'users', currentUser.uid));
+            if (docSnap.exists()) {
+                setPharmaData(docSnap.data());
+            }
+        };
+        fetchPharma();
+    }, [currentUser]);
 
     // Helper to safely format Firestore timestamps or Dates
     const formatOrderDate = (timestamp) => {
@@ -73,11 +87,41 @@ const PharmacyDashboard = () => {
         // Use onSnapshot for real-time Orders with indexing optimization
         const q = query(
             collection(db, 'orders'),
-            where('pharmacyId', '==', currentUser.uid)
+            or(
+                where('pharmacyId', '==', currentUser.uid),
+                where('pharmacyId', '==', 'broadcast')
+            )
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             try {
+                const fetched = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    let distance = null;
+                    
+                    // Calculate distance for broadcast orders
+                    if (data.pharmacyId === 'broadcast' && pharmaData?.latitude && data.customerLat) {
+                        distance = calculateDistance(
+                            pharmaData.latitude, 
+                            pharmaData.longitude, 
+                            data.customerLat, 
+                            data.customerLng
+                        );
+                    }
+
+                    return {
+                        id: doc.id,
+                        ...data,
+                        distance: distance ? Number(distance.toFixed(1)) : null
+                    };
+                }).filter(order => {
+                    // Only show broadcast orders that are within 10km
+                    if (order.pharmacyId === 'broadcast') {
+                        return order.distance !== null && order.distance <= 10;
+                    }
+                    return true;
+                });
+
                 const startOfDay = new Date();
                 startOfDay.setHours(0, 0, 0, 0);
 
@@ -86,9 +130,8 @@ const PharmacyDashboard = () => {
                 let tCompleted = 0;
 
                 // 1. Normalize and Calculate Stable Sorting Value
-                const fetched = snapshot.docs.map(doc => {
-                    const data = doc.data();
-                    const ts = data.createdAt;
+                const processed = fetched.map(order => {
+                    const ts = order.createdAt;
                     let millis = 0;
 
                     // Analytics calculation
@@ -99,9 +142,9 @@ const PharmacyDashboard = () => {
 
                     if (isToday) {
                         tOrders++;
-                        if (data.orderStatus === 'completed') {
+                        if (order.orderStatus === 'completed') {
                             tCompleted++;
-                            tEarnings += Number(data.totalAmount || 0);
+                            tEarnings += Number(order.totalAmount || 0);
                         }
                     }
 
@@ -125,7 +168,7 @@ const PharmacyDashboard = () => {
                         millis = isNaN(d.getTime()) ? 0 : d.getTime();
                     }
 
-                    return { ...data, id: doc.id, _sortMillis: Number(millis) || 0 };
+                    return { ...order, _sortMillis: Number(millis) || 0 };
                 });
 
                 setAnalytics({
@@ -135,7 +178,7 @@ const PharmacyDashboard = () => {
                 });
 
                 // 2. Stable Newest-First Sort (Desc) with Priority grouping
-                fetched.sort((a, b) => {
+                processed.sort((a, b) => {
                     // Group 1: Ongoing (Pending, Confirmed, etc.)
                     // Group 2: Finalized (Completed, Rejected, Cancelled)
                     const isOngoing = (status) => ['pending', 'confirmed', 'outForDelivery', 'pickedUp'].includes(status);
@@ -174,7 +217,7 @@ const PharmacyDashboard = () => {
                     return b.id.localeCompare(a.id);
                 });
 
-                setOrders(fetched);
+                setOrders(processed);
             } catch (err) {
                 console.error("Pharmacy order processing error:", err);
             } finally {
@@ -186,7 +229,7 @@ const PharmacyDashboard = () => {
         });
 
         return () => unsubscribe();
-    }, [currentUser?.uid, fetchMedicines]);
+    }, [currentUser?.uid, fetchMedicines, pharmaData?.latitude, pharmaData?.longitude]);
 
     const handlePricingChange = (orderId, itemId, price) => {
         setPricingInputs(prev => ({
@@ -232,6 +275,36 @@ const PharmacyDashboard = () => {
         } catch (error) {
             console.error("Save pricing failed:", error);
             setMessage({ type: 'error', text: 'Failed to save pricing' });
+        }
+    };
+
+    const handleAcceptEmergency = async (orderId) => {
+        try {
+            setAcceptingId(orderId);
+            const orderRef = doc(db, 'orders', orderId);
+            
+            // Re-verify it's still available
+            const snap = await getDoc(orderRef);
+            if (snap.data().pharmacyId !== 'broadcast') {
+                alert("This order was already accepted by another pharmacy.");
+                return;
+            }
+
+            await updateDoc(orderRef, {
+                pharmacyId: currentUser.uid,
+                pharmacyName: pharmaData?.name || 'Pharmacy',
+                pharmacyPhone: pharmaData?.phone || '',
+                pharmacyAddress: pharmaData?.address || '',
+                pharmacyLat: pharmaData?.latitude || null,
+                pharmacyLng: pharmaData?.longitude || null,
+                acceptedAt: serverTimestamp()
+            });
+
+        } catch (error) {
+            console.error("Error accepting emergency:", error);
+            alert("Failed to accept emergency request.");
+        } finally {
+            setAcceptingId(null);
         }
     };
 
@@ -655,8 +728,27 @@ const PharmacyDashboard = () => {
                                 {orders.map((order) => (
                                     <motion.div key={order.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`p-6 md:p-8 rounded-[2rem] shadow-md border relative overflow-hidden ${order.isEmergency ? 'bg-red-50 border-red-300 shadow-red-900/10' : 'bg-white border-gray-100'}`}>
                                         {order.isEmergency && (
-                                            <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-lg shadow-sm flex flex-col md:flex-row md:items-center gap-1 z-10 animate-pulse">
-                                                <AlertCircle size={14} className="inline mr-1" /> HIGH PRIORITY EMERGENCY
+                                            <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-lg shadow-sm z-[20] animate-pulse flex items-center gap-2">
+                                                <Siren size={12} /> EMERGENCY REQUEST
+                                            </div>
+                                        )}
+
+                                        {order.pharmacyId === 'broadcast' && (
+                                            <div className="absolute inset-0 bg-red-50/90 backdrop-blur-[2px] z-[50] flex flex-col items-center justify-center p-6 text-center">
+                                                <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4 animate-bounce">
+                                                    <Siren size={32} />
+                                                </div>
+                                                <h3 className="text-xl font-black text-red-900 mb-2">NEW EMERGENCY NEARBY</h3>
+                                                <p className="text-red-700 font-bold text-sm mb-6 max-w-[250px]">
+                                                    This customer is <span className="underline">{order.distance} km</span> away and needs help immediately.
+                                                </p>
+                                                <button
+                                                    onClick={() => handleAcceptEmergency(order.id)}
+                                                    disabled={acceptingId === order.id}
+                                                    className="bg-red-600 text-white px-8 py-3 rounded-2xl font-black shadow-xl shadow-red-900/20 hover:bg-red-700 active:scale-95 transition-all flex items-center gap-2"
+                                                >
+                                                    {acceptingId === order.id ? <Loader2 size={18} className="animate-spin" /> : <>Accept & Open Request <Check size={18} /></>}
+                                                </button>
                                             </div>
                                         )}
 

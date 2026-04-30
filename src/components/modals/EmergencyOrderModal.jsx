@@ -95,24 +95,9 @@ const EmergencyOrderModal = ({ isOpen, onClose, userLat, userLng }) => {
         setError(null);
 
         try {
-            // 1. Find nearest pharmacy
-            const pharmacyQuery = query(collection(db, "users"), where("role", "==", "pharmacy"));
-            const pharmacySnapshot = await getDocs(pharmacyQuery);
-            let nearestPharma = null;
-            let minDistance = Infinity;
-
-            pharmacySnapshot.docs.forEach(doc => {
-                const p = doc.data();
-                if (p.latitude && p.longitude) {
-                    const dist = getDistance(userLat, userLng, p.latitude, p.longitude);
-                    if (dist < minDistance) {
-                        minDistance = dist;
-                        nearestPharma = { id: doc.id, ...p };
-                    }
-                }
-            });
-
-            if (!nearestPharma) throw new Error("No pharmacies available in the network.");
+            // 1. BROADCAST: We now broadcast to all nearby pharmacies instead of picking one.
+            // This ensures reliability if the nearest pharmacy is busy.
+            const nearestPharma = { id: 'broadcast' }; 
 
             // 2. Upload Prescription if exists
             let prescriptionURL = null;
@@ -150,9 +135,11 @@ const EmergencyOrderModal = ({ isOpen, onClose, userLat, userLng }) => {
 
             const orderData = {
                 customerId: currentUser.uid,
-                pharmacyId: nearestPharma.id,
+                pharmacyId: 'broadcast', // BROADCAST MODE
                 customerInfo: { name, phone },
                 selectedAddress: { addressLine: addressText, latitude: userLat, longitude: userLng },
+                customerLat: userLat, // For distance filtering on pharmacy side
+                customerLng: userLng,
                 items,
                 prescriptionURL,
                 baseCharges: 45,

@@ -52,6 +52,10 @@ const Signup = () => {
 
         // Validation
         if (role === 'pharmacy') {
+            if (!latitude || !longitude) {
+                setError("Please capture your pharmacy's GPS location using the button below.");
+                return;
+            }
             if (!acceptCOD && !acceptUPI) {
                 setError("Please select at least one payment method (COD or UPI).");
                 return;
